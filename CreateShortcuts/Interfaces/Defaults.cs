@@ -5,23 +5,23 @@ namespace DoenaSoft.CreateShortcuts
 {
     public static class Defaults
     {
-        public const String RootFolderForShortcutFiles = @"D:\Videos\Links";
+        public const string RootFolderForShortcutFiles = @"D:\Videos\Links";
 
-        public const String SeasonFolderPattern = "Season *";
+        public const string SeasonFolderPattern = "Season *";
 
-        public const String StaffelFolderPattern = "Staffel *";
+        public const string StaffelFolderPattern = "Staffel *";
 
-        public const String SeriesNamePattern = "*.*";
+        public const string SeriesNamePattern = "*.*";
 
-        public const String ShortcutExtension = ".lnk";
+        public const string ShortcutExtension = ".lnk";
 
-        public static IEnumerable<String> VideoFileFolders
+        public static IEnumerable<string> VideoFileFolders
         {
             get
             {
-                yield return (@"N:\Drive1\TVShows\");
-                yield return (@"N:\Drive2\TVShows\");
-                yield return (@"N:\Drive3\TVShows\");
+                yield return @"N:\Drive1\TVShows\";
+                yield return @"N:\Drive2\TVShows\";
+                yield return @"N:\Drive3\TVShows\";
             }
         }
     }
