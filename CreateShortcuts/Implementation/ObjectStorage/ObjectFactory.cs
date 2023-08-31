@@ -76,7 +76,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         }
 
         public IIOServices CreateIOServices(IObjectStorage os)
-            => new AbstractionLayer.IOServices.Implementations.IOServices(os.Logger);
+            => new AbstractionLayer.IOServices.IOServices(os.Logger);
 
         public IShortcut CreateShortcut(string linkFileName
             , IObjectStorage os)
