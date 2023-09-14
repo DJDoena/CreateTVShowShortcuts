@@ -1,53 +1,51 @@
-﻿using DoenaSoft.CreateShortcuts.Interfaces;
+﻿using System;
+using System.Diagnostics;
+using DoenaSoft.CreateShortcuts.Interfaces;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 using DoenaSoft.CreateShortcuts.Tests.Processors;
-using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DoenaSoft.CreateShortcuts
 {
-    public static class TestProgram
+    [TestClass]
+    public class TestProgram
     {
-        public static void Main(String[] args)
+        [TestMethod]
+        public void TestProgram1()
         {
-            DefaultsPrinter.PrintDefaults();
+            Test(new TestProgram1());
+        }
 
-            try
-            {
-                Test(new TestProgram1());
+        [TestMethod]
+        public void TestProgram2()
+        {
+            Test(new TestProgram2());
+        }
 
-                Test(new TestProgram2());
-
-                Test(new TestProgram3());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-
-                Console.ReadLine();
-            }
+        [TestMethod]
+        public void TestProgram3()
+        {
+            Test(new TestProgram3());
         }
 
         private static void Test(IProgram testProgram)
         {
             try
             {
-                testProgram.PrintDefaults();
-                
-                testProgram.Process();
-                
-                testProgram.Dispose();
+                DefaultsPrinter.PrintDefaults();
 
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
+                testProgram.PrintDefaults();
+
+                testProgram.Process();
+
+                testProgram.Dispose();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
 
-                Console.ReadLine();
+                throw;
             }
         }
     }

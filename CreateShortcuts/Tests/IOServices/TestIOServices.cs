@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using DoenaSoft.AbstractionLayer.IOServices;
@@ -9,19 +10,22 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 {
     internal sealed class TestIOServices : IIOServices
     {
-        private readonly Assembly Assembly;
+        private readonly FileSystemMock _fileSystemMock;
+
+        private readonly Assembly _assembly;
 
         public TestIOServices(FileSystemMock fileSystemMock
             , IEnumerable<SearchPatternMatch> searchPatternMatches
             , IObjectStorage os)
         {
-            Assembly = typeof(IIOServices).Assembly;
+            _fileSystemMock = fileSystemMock;
+            _assembly = typeof(IIOServices).Assembly;
 
-            Path = Instantiate<IPath>("DoenaSoft.AbstractionLayer.IOServices.Implementations.Path");
+            this.Path = this.Instantiate<IPath>("DoenaSoft.AbstractionLayer.IOServices.Path");
 
-            Folder = new TestDirectory(fileSystemMock, searchPatternMatches, os);
+            this.Folder = new TestFolder(fileSystemMock, searchPatternMatches, os);
 
-            File = new TestFile(fileSystemMock, os);
+            this.File = new TestFile(fileSystemMock, os);
         }
 
         public IPath Path { get; private set; }
@@ -30,13 +34,21 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 
         public IFile File { get; private set; }
 
-        public IFileInfo GetFileInfo(String fileName)
-            => (Instantiate<IFileInfo>("DoenaSoft.AbstractionLayer.IOServices.Implementations.FileInfo", fileName));
+        public IFileInfo GetFileInfo(string fileName)
+        {
+            var fi = _fileSystemMock.Files.FirstOrDefault(f => f.FullName == fileName);
 
-        public IFolderInfo GetFolderInfo(String path)
-            => (Instantiate<IFolderInfo>("DoenaSoft.AbstractionLayer.IOServices.Implementations.FolderInfo", path));
+            return fi ?? new TestFileInfo(fileName, _fileSystemMock);
+        }
 
-        public System.IO.Stream GetFileStream(String fileName
+        public IFolderInfo GetFolderInfo(string path)
+        {
+            var fi = _fileSystemMock.Folders.FirstOrDefault(f => f.FullName == path);
+
+            return fi ?? new TestFolderInfo(path, _fileSystemMock);
+        }
+
+        public System.IO.Stream GetFileStream(string fileName
             , System.IO.FileMode mode
             , System.IO.FileAccess access
             , System.IO.FileShare share)
@@ -44,12 +56,12 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IDriveInfo> GetDriveInfos(Nullable<System.IO.DriveType> driveType)
+        public IEnumerable<IDriveInfo> GetDriveInfos(System.IO.DriveType? driveType)
         {
             throw new NotImplementedException();
         }
 
-        public IDriveInfo GetDriveInfo(String driveLetter)
+        public IDriveInfo GetDriveInfo(string driveLetter)
         {
             throw new NotImplementedException();
         }
@@ -60,20 +72,20 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             throw new NotImplementedException();
         }
 
-        public IFileSystemWatcher GetFileSystemWatcher(String path
-            , String filter = null)
+        public IFileSystemWatcher GetFileSystemWatcher(string path
+            , string filter = null)
         {
             throw new NotImplementedException();
         }
 
-        private T Instantiate<T>(String typeName
-            , params Object[] args)
+        private T Instantiate<T>(string typeName
+            , params object[] args)
         {
-            Type type = Assembly.GetType(typeName);
+            var type = _assembly.GetType(typeName);
 
-            T instance = (T)(Activator.CreateInstance(type, args));
+            var instance = (T)Activator.CreateInstance(type, args);
 
-            return (instance);
+            return instance;
         }
     }
 }

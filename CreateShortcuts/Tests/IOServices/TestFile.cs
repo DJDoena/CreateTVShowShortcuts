@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
@@ -8,64 +7,64 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 {
     internal sealed class TestFile : IFile
     {
-        private readonly FileSystemMock FileSystemMock;
+        private readonly FileSystemMock _fileSystemMock;
 
-        private readonly IObjectStorage ObjectStorage;
+        private readonly IObjectStorage _objectStorage;
 
         public TestFile(FileSystemMock fileSystemMock
             , IObjectStorage os)
         {
-            FileSystemMock = fileSystemMock;
-            ObjectStorage = os;
+            _fileSystemMock = fileSystemMock;
+            _objectStorage = os;
         }
 
-        public Boolean Exists(String path)
+        public bool Exists(string path)
         {
-            Boolean exists;
+            bool exists;
 
-            exists = FileSystemMock.Files.Contains(path);
+            exists = _fileSystemMock.Files.Select(f => f.FullName).Contains(path);
 
-            return (exists);
+            return exists;
         }
 
-        public void Copy(String sourceFileName
-            , String destFileName
-            , Boolean overwrite = true)
+        public void Copy(string sourceFileName
+            , string destFileName
+            , bool overwrite = true)
         {
             ILogger logger;
 
-            if (FileSystemMock.Files.Contains(sourceFileName) == false)
+            if (_fileSystemMock.Files.Select(f => f.FullName).Contains(sourceFileName) == false)
             {
-                throw (new NotSupportedException());
+                throw new NotSupportedException();
             }
 
-            logger = ObjectStorage.Logger;
+            logger = _objectStorage.Logger;
 
             logger.WriteLine("Copy virtual file \"{0}\"", true, sourceFileName);
             logger.WriteLine("to virtual        \"{0}\"", destFileName);
 
-            FileSystemMock.AddFile(destFileName);
+            _fileSystemMock.AddFile(destFileName, overwrite);
         }
 
-        public void Delete(String path)
+        public void Delete(string path)
         {
             throw new NotImplementedException();
         }
 
-        public void Move(String oldFileName
-            , String newFileName
-            , Boolean overwrite)
+        public void Move(string oldFileName
+            , string newFileName
+            , bool overwrite)
         {
             throw new NotImplementedException();
         }
 
-        public void SetAttributes(String fullName
+        public void SetAttributes(string fullName
             , System.IO.FileAttributes fileAttributes)
         {
             throw new NotImplementedException();
         }
 
-        public Stream Create(string fileName)
+        public System.IO.Stream Create(string fileName)
         {
             throw new NotImplementedException();
         }

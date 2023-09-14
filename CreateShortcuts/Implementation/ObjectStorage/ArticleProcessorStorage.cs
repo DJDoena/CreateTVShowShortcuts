@@ -15,15 +15,15 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         public IArticleProcessor GetArticleProcessor(string seriesName, bool articleIsPrefix)
         {
 
-            if (ArticleProcessors == null)
+            if (this.ArticleProcessors == null)
             {
-                ArticleProcessors = new Dictionary<string, Dictionary<bool, IArticleProcessor>>();
+                this.ArticleProcessors = new Dictionary<string, Dictionary<bool, IArticleProcessor>>();
             }
 
-            if (ArticleProcessors.TryGetValue(seriesName, out var innerDict) == false)
+            if (this.ArticleProcessors.TryGetValue(seriesName, out var innerDict) == false)
             {
                 innerDict = new Dictionary<bool, IArticleProcessor>();
-                ArticleProcessors[seriesName] = innerDict;
+                this.ArticleProcessors[seriesName] = innerDict;
             }
 
             innerDict.TryGetValue(articleIsPrefix, out var processor);

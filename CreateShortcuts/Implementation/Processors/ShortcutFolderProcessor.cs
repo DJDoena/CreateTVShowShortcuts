@@ -7,87 +7,88 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 {
     internal sealed class ShortcutFolderProcessor : IProcessor
     {
-        private List<string> Warnings { get; set; }
+        private readonly IObjectStorage _objectStorage;
 
-        private readonly IObjectStorage ObjectStorage;
+        private List<string> Warnings { get; set; }
 
         public ShortcutFolderProcessor(IObjectStorage os)
         {
-            Warnings = new List<string>();
+            this.Warnings = new List<string>();
 
             var wp = os.WarningsProcessor;
-            wp.AddWarnings(Warnings);
 
-            ObjectStorage = os;
+            wp.AddWarnings(this.Warnings);
+
+            _objectStorage = os;
         }
 
         public void Process()
         {
-            foreach (var videoFileFolder in ObjectStorage.Program.VideoFileFolders)
+            foreach (var videoFileFolder in _objectStorage.Program.VideoFileFolders)
             {
-                IterateOverVideoFileFolder(videoFileFolder);
+                this.IterateOverVideoFileFolder(videoFileFolder);
             }
         }
 
         private void IterateOverVideoFileFolder(string videoFileFolder)
         {
-            var seriesFolders = ObjectStorage.IOServices.Folder.GetFolderNames(videoFileFolder, ObjectStorage.Program.SeriesNamePattern);
+            var seriesFolders = _objectStorage.IOServices.Folder.GetFolderNames(videoFileFolder, _objectStorage.Program.SeriesNamePattern);
 
             foreach (var seriesFolder in seriesFolders)
             {
-                ProcessSeriesFolder(seriesFolder);
+                this.ProcessSeriesFolder(seriesFolder);
             }
         }
 
         private void ProcessSeriesFolder(string seriesFolder)
         {
-            var ioServices = ObjectStorage.IOServices;
+            var ioServices = _objectStorage.IOServices;
 
             var seriesFolderDI = ioServices.GetFolderInfo(seriesFolder);
 
-            var seasonFolders = ioServices.Folder.GetFolderNames(seriesFolder, ObjectStorage.Program.SeasonFolderPattern)
-                .Union(ioServices.Folder.GetFolderNames(seriesFolder, ObjectStorage.Program.StaffelFolderPattern)).ToArray();
+            var seasonFolders = ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.SeasonFolderPattern)
+                .Union(ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.StaffelFolderPattern)).ToArray();
 
             if (seasonFolders.Length > 0)
             {
-                CreateShortcutForSeasonFolder(seasonFolders, seriesFolderDI.Name);
+                this.CreateShortcutForSeasonFolder(seasonFolders, seriesFolderDI.Name);
             }
-            else if (ObjectStorage.Helper.IsSpecialFolder(seriesFolderDI))
+            else if (_objectStorage.Helper.IsSpecialFolder(seriesFolderDI))
             {
-                CreateShortcut(ObjectStorage.Program.RootFolderForShortcutFiles, seriesFolder);
+                this.CreateShortcut(_objectStorage.Program.RootFolderForShortcutFiles, seriesFolder);
             }
         }
 
         private void CreateShortcutForSeasonFolder(IEnumerable<string> seasonFolders, string seriesFolderName)
         {
-            var articleProcessor = ObjectStorage.GetArticleProcessor(seriesFolderName, true);
+            var articleProcessor = _objectStorage.GetArticleProcessor(seriesFolderName, true);
 
             articleProcessor.Process();
 
             seriesFolderName = articleProcessor.SeriesName;
 
-            var ioServices = ObjectStorage.IOServices;
+            var ioServices = _objectStorage.IOServices;
 
-            var seriesFolderForShortcutFiles = ioServices.Path.Combine(ObjectStorage.Program.RootFolderForShortcutFiles, seriesFolderName);
+            var seriesFolderForShortcutFiles = ioServices.Path.Combine(_objectStorage.Program.RootFolderForShortcutFiles, seriesFolderName);
 
-            if (FolderDoesNotExist(seriesFolderForShortcutFiles))
+            if (this.FolderDoesNotExist(seriesFolderForShortcutFiles))
             {
                 ioServices.Folder.CreateFolder(seriesFolderForShortcutFiles);
             }
 
             foreach (var seasonFolder in seasonFolders)
             {
-                CreateShortcut(seriesFolderForShortcutFiles, seasonFolder);
+                this.CreateShortcut(seriesFolderForShortcutFiles, seasonFolder);
             }
         }
 
         private void CreateShortcut(string seriesFolderForShortcutFiles, string seasonFolder)
         {
-            var warning = ObjectStorage.ShortcutCreator.Create(seriesFolderForShortcutFiles, seasonFolder);
+            var warning = _objectStorage.ShortcutCreator.Create(seriesFolderForShortcutFiles, seasonFolder);
 
             if (HasWarning(warning))
             {
-                Warnings.Add(warning);
+                this.Warnings.Add(warning);
             }
         }
 
@@ -100,7 +101,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
         private bool FolderDoesNotExist(string folder)
         {
-            var exists = ObjectStorage.IOServices.Folder.Exists(folder);
+            var exists = _objectStorage.IOServices.Folder.Exists(folder);
 
             return exists == false;
         }

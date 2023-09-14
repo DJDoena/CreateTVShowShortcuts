@@ -1,17 +1,15 @@
-﻿using System;
-
-namespace DoenaSoft.CreateShortcuts.Interfaces.Processors
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.Processors
 {
     public interface IArgumentsProcessor : IProcessor
     {
-        Boolean AppendArticles { get; }
+        bool AppendArticles { get; }
 
-        String LogFile { get; }
+        string LogFile { get; }
 
-        Boolean DualLog { get; }
+        bool DualLog { get; }
 
-        Boolean ShowHelp { get; }
-        
+        bool ShowHelp { get; }
+
         void PrintArguments();
     }
 }

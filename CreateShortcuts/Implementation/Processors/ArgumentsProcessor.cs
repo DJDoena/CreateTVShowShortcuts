@@ -8,9 +8,11 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 {
     internal sealed class ArgumentsProcessor : IArgumentsProcessor
     {
-        private readonly IObjectStorage ObjectStorage;
+        private readonly IObjectStorage _objectStorage;
 
-        private readonly List<string> Arguments;
+        private readonly List<string> _arguments;
+
+        private bool _dualLog;
 
         private List<string> Warnings { get; set; }
 
@@ -18,29 +20,25 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
         public string LogFile { get; private set; }
 
-        private bool m_DualLog;
-
         public bool ShowHelp { get; private set; }
 
         public ArgumentsProcessor(IObjectStorage os)
         {
-            ObjectStorage = os;
-            Arguments = ObjectStorage.Arguments.ToList();
-            Warnings = new List<string>();
+            _objectStorage = os;
+            _arguments = _objectStorage.Arguments.ToList();
+            this.Warnings = new List<string>();
 
-            AppendArticles = true;
-            LogFile = null;
-            m_DualLog = false;
-            ShowHelp = false;
+            this.AppendArticles = true;
+            this.LogFile = null;
+            _dualLog = false;
+            this.ShowHelp = false;
         }
 
         public bool DualLog
         {
             get
             {
-                bool dualLog;
-
-                dualLog = (m_DualLog) && (string.IsNullOrEmpty(LogFile) == false);
+                var dualLog = _dualLog && (string.IsNullOrEmpty(this.LogFile) == false);
 
                 return dualLog;
             }
@@ -48,37 +46,38 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
         public void Process()
         {
-            Warnings = new List<string>();
+            this.Warnings = new List<string>();
 
-            if (HasItems())
+            if (this.HasItems())
             {
-                foreach (var arg in Arguments)
+                foreach (var arg in _arguments)
                 {
-                    ProcessArg(arg);
+                    this.ProcessArg(arg);
                 }
             }
 
-            if (ShowHelp)
+            if (this.ShowHelp)
             {
                 return;
             }
 
-            if (m_DualLog && string.IsNullOrEmpty(LogFile))
+            if (_dualLog && string.IsNullOrEmpty(this.LogFile))
             {
                 string warning;
 
                 warning = string.Format("Invalid combination: \"{0}\", but no \"{1}\"", "/DualLog=true", "/LogFile={{FileName}}");
 
-                Warnings.Add(warning);
+                this.Warnings.Add(warning);
             }
 
-            var wp = ObjectStorage.WarningsProcessor;
-            wp.AddWarnings(Warnings);
+            var wp = _objectStorage.WarningsProcessor;
+
+            wp.AddWarnings(this.Warnings);
         }
 
         private bool HasItems()
         {
-            var hasItems = (Arguments != null) && (Arguments.Count > 0);
+            var hasItems = (_arguments != null) && (_arguments.Count > 0);
 
             return hasItems;
         }
@@ -95,23 +94,23 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
             if (loweredArg.StartsWith(LoweredAppendArticlesKey))
             {
-                AppendArticles = ProcessBooleanArgument(arg, loweredArg, LoweredAppendArticlesKey);
+                this.AppendArticles = this.ProcessBooleanArgument(arg, loweredArg, LoweredAppendArticlesKey);
             }
             else if (loweredArg.StartsWith(LoweredLogFileKey))
             {
-                ProcessLogFileArgument(arg);
+                this.ProcessLogFileArgument(arg);
             }
             else if (loweredArg.StartsWith(LoweredDualLogKey))
             {
-                m_DualLog = ProcessBooleanArgument(arg, loweredArg, LoweredDualLogKey);
+                _dualLog = this.ProcessBooleanArgument(arg, loweredArg, LoweredDualLogKey);
             }
             else if ((loweredArg == LoweredHelpKey1) || (arg == HelpKey2))
             {
-                ShowHelp = true;
+                this.ShowHelp = true;
             }
             else
             {
-                AppendInvalidArgumentWarning(arg);
+                this.AppendInvalidArgumentWarning(arg);
             }
         }
 
@@ -125,18 +124,18 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
                 if (split[1].IndexOfAny(invalidChars) == -1)
                 {
-                    LogFile = split[1];
+                    this.LogFile = split[1];
 
                     return;
                 }
             }
 
-            AppendInvalidArgumentWarning(arg);
+            this.AppendInvalidArgumentWarning(arg);
         }
 
         private bool ProcessBooleanArgument(string arg, string loweredArg, string LoweredArgKey)
         {
-            var value = loweredArg == LoweredArgKey ? true : ProcessBooleanArgument(arg);
+            var value = loweredArg == LoweredArgKey || this.ProcessBooleanArgument(arg);
 
             return value;
         }
@@ -153,7 +152,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
                 }
             }
 
-            AppendInvalidArgumentWarning(arg);
+            this.AppendInvalidArgumentWarning(arg);
 
             return false;
         }
@@ -162,12 +161,12 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
         {
             var warning = string.Format("Invalid argument: {0}", arg);
 
-            Warnings.Add(warning);
+            this.Warnings.Add(warning);
         }
 
         public void PrintArguments()
         {
-            var logger = ObjectStorage.Logger;
+            var logger = _objectStorage.Logger;
 
             logger.WriteLineForInput("Parameters:");
             logger.WriteLineForInput("/AppendArticles[=false]");

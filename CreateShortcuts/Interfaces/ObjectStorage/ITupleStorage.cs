@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
 {
     public interface ITupleStorage
     {
-        ITuple GetTuple(String article
-            , Boolean articleIsPrefix);
+        ITuple GetTuple(string article
+            , bool articleIsPrefix);
     }
 }

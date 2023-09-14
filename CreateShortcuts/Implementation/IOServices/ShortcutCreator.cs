@@ -5,35 +5,37 @@ namespace DoenaSoft.CreateShortcuts.Implementation.IOServices
 {
     internal sealed class ShortcutCreator : IShortcutCreator
     {
-        private readonly IObjectStorage ObjectStorage;
+        private readonly IObjectStorage _objectStorage;
 
-        private readonly IObjectFactory ObjectFactory;
+        private readonly IObjectFactory _objectFactory;
 
         public ShortcutCreator(IObjectStorage objectStorage, IObjectFactory objectFactory)
         {
-            ObjectStorage = objectStorage;
-            ObjectFactory = objectFactory;
+            _objectStorage = objectStorage;
+            _objectFactory = objectFactory;
         }
 
         public string Create(string seriesFolderForShortcutFiles, string seasonFolder)
         {
-            var ioServices = ObjectStorage.IOServices;
+            var ioServices = _objectStorage.IOServices;
 
             string warning = null;
 
             var seasonFolderDI = ioServices.GetFolderInfo(seasonFolder);
 
-            var linkFileName = seasonFolderDI.Name + ObjectStorage.Program.ShortcutExtension;
+            var linkFileName = seasonFolderDI.Name + _objectStorage.Program.ShortcutExtension;
+
             linkFileName = ioServices.Path.Combine(seriesFolderForShortcutFiles, linkFileName);
 
             if (ioServices.File.Exists(linkFileName))
             {
                 warning = string.Format("Remove \"{0}\"", linkFileName);
 
-                ObjectStorage.Logger.WriteLine(warning);
+                _objectStorage.Logger.WriteLine(warning);
             }
 
-            var shortcut = ObjectFactory.CreateShortcut(linkFileName, ObjectStorage);
+            var shortcut = _objectFactory.CreateShortcut(linkFileName, _objectStorage);
+
             shortcut.TargetPath = seasonFolder;
             shortcut.WorkingFolder = seasonFolder;
             shortcut.Description = seasonFolderDI.Name;

@@ -9,7 +9,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation
     {
         public bool IsSpecialFolder(IFolderInfo di)
         {
-            var isSpecialFolder = SpecialFolders.Contains(di.Name);
+            var isSpecialFolder = this.SpecialFolders.Contains(di.Name);
 
             return isSpecialFolder;
         }

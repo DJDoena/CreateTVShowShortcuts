@@ -10,7 +10,7 @@ namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
     {
         IProgram Program { get; }
 
-        IEnumerable<String> Arguments { get; }
+        IEnumerable<string> Arguments { get; }
 
         IWarningsProcessor WarningsProcessor { get; }
 

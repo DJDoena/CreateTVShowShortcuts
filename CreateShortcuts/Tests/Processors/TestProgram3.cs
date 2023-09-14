@@ -1,36 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DoenaSoft.AbstractionLayer.IOServices;
 
 namespace DoenaSoft.CreateShortcuts.Tests.Processors
 {
     internal sealed class TestProgram3 : TestProgramBase
     {
-        private readonly String TestRoot;
+        private readonly string TestRoot;
 
-        private readonly String ShortcutRoot;
+        private readonly string ShortcutRoot;
 
-        public override String RootFolderForShortcutFiles
+        public override string RootFolderForShortcutFiles
         {
             get
             {
-                return (ShortcutRoot);
+                return ShortcutRoot;
             }
         }
 
-        public override IEnumerable<String> VideoFileFolders
+        public override IEnumerable<string> VideoFileFolders
         {
             get
             {
-                return (Defaults.VideoFileFolders);
-            }
-        }
-
-        protected override String LogFileName
-        {
-            get
-            {
-                return ("TestProgram3.log");
+                return Defaults.VideoFileFolders;
             }
         }
 
@@ -38,7 +29,7 @@ namespace DoenaSoft.CreateShortcuts.Tests.Processors
         {
             IIOServices ioServices;
 
-            ioServices = ObjectStorage.IOServices;
+            ioServices = _objectStorage.IOServices;
 
             TestRoot = ioServices.Path.Combine(ioServices.Path.GetTempPath(), "CreateShortcutTest");
 
@@ -50,18 +41,18 @@ namespace DoenaSoft.CreateShortcuts.Tests.Processors
             }
             ioServices.Folder.CreateFolder(TestRoot);
 
-            foreach (String folder in VideoFileFolders)
+            foreach (var folder in this.VideoFileFolders)
             {
                 AddVideoFolderToTest(ioServices, folder);
             }
         }
 
         private static void AddVideoFolderToTest(IIOServices ioServices
-            , String folder)
+            , string folder)
         {
             if (System.IO.Directory.Exists(folder))
             {
-                IEnumerable<String> folders;
+                IEnumerable<string> folders;
 
                 folders = System.IO.Directory.GetDirectories(folder, Defaults.SeriesNamePattern, System.IO.SearchOption.AllDirectories);
 
@@ -70,9 +61,9 @@ namespace DoenaSoft.CreateShortcuts.Tests.Processors
         }
 
         private static void AddSubFoldersToTest(IIOServices ioServices
-            , IEnumerable<String> folders)
+            , IEnumerable<string> folders)
         {
-            foreach (String folder in folders)
+            foreach (var folder in folders)
             {
                 ioServices.Folder.CreateFolder(folder);
             }

@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace DoenaSoft.CreateShortcuts.Interfaces.IOServices
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.IOServices
 {
     public interface IShortcutCreator
     {
-        String Create(String seriesFolderForShortcutFiles
-            , String seasonFolder);
+        string Create(string seriesFolderForShortcutFiles
+            , string seasonFolder);
     }
 }

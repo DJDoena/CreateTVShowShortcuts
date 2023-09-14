@@ -1,5 +1,5 @@
-﻿using DoenaSoft.CreateShortcuts.Interfaces.Processors;
-using System;
+﻿using System;
+using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
 namespace DoenaSoft.CreateShortcuts.Interfaces
 {
@@ -28,7 +28,7 @@ namespace DoenaSoft.CreateShortcuts.Interfaces
             Console.WriteLine();
 
             Console.WriteLine("VideoFileFolders:");
-            foreach (String folder in program.VideoFileFolders)
+            foreach (var folder in program.VideoFileFolders)
             {
                 Console.WriteLine(folder);
             }
@@ -64,7 +64,7 @@ namespace DoenaSoft.CreateShortcuts.Interfaces
             Console.WriteLine();
 
             Console.WriteLine("VideoFileFolders:");
-            foreach (String folder in Defaults.VideoFileFolders)
+            foreach (var folder in Defaults.VideoFileFolders)
             {
                 Console.WriteLine(folder);
             }

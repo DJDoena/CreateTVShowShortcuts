@@ -10,49 +10,50 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
 {
     internal sealed class ObjectStorage : IObjectStorage
     {
-        private readonly IProgram Program;
+        private readonly IProgram _program;
 
-        private readonly IObjectFactory ObjectFactory;
+        private readonly IObjectFactory _objectFactory;
+
+        private IWarningsProcessor _warningsProcessor;
+
+        private IArgumentsProcessor _argumentsProcessor;
+
+        private IProcessor _shortcutFolderProcessor;
+
+        private IProcessor _videoFolderProcessor;
+
+        private IHelper _helper;
+
+        private IShortcutCreator _shortcutCreator;
+
+        private IIOServices _ioServices;
+
+        private ILogger _logger;
 
         public IEnumerable<string> Arguments { get; private set; }
-
-        private IWarningsProcessor m_WarningsProcessor;
-
-        private IArgumentsProcessor m_ArgumentsProcessor;
-
-        private IProcessor m_ShortcutFolderProcessor;
-
-        private IProcessor m_VideoFolderProcessor;
-
-        private IHelper m_Helper;
 
         private IArticleProcessorStorage ArticleProcessorStorage { get; set; }
 
         private ITupleStorage TupleStorage { get; set; }
 
-        private IShortcutCreator m_ShortcutCreator;
-
-        private IIOServices m_IOServices;
-
-        private ILogger m_Logger;
 
         public ObjectStorage(IProgram program, IEnumerable<string> arguments, IObjectFactory of)
         {
-            Program = program;
-            Arguments = arguments;
-            ObjectFactory = of;
+            _program = program;
+            this.Arguments = arguments;
+            _objectFactory = of;
         }
 
         public IWarningsProcessor WarningsProcessor
         {
             get
             {
-                if (m_WarningsProcessor == null)
+                if (_warningsProcessor == null)
                 {
-                    m_WarningsProcessor = ObjectFactory.CreateWarningsProcessor(this);
+                    _warningsProcessor = _objectFactory.CreateWarningsProcessor(this);
                 }
 
-                return m_WarningsProcessor;
+                return _warningsProcessor;
             }
         }
 
@@ -60,12 +61,12 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_ArgumentsProcessor == null)
+                if (_argumentsProcessor == null)
                 {
-                    m_ArgumentsProcessor = ObjectFactory.CreateArgumentsProessor(this);
+                    _argumentsProcessor = _objectFactory.CreateArgumentsProessor(this);
                 }
 
-                return m_ArgumentsProcessor;
+                return _argumentsProcessor;
             }
         }
 
@@ -73,12 +74,12 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_ShortcutFolderProcessor == null)
+                if (_shortcutFolderProcessor == null)
                 {
-                    m_ShortcutFolderProcessor = ObjectFactory.CreateShortcutFolderProcessor(this);
+                    _shortcutFolderProcessor = _objectFactory.CreateShortcutFolderProcessor(this);
                 }
 
-                return m_ShortcutFolderProcessor;
+                return _shortcutFolderProcessor;
             }
         }
 
@@ -86,23 +87,23 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_VideoFolderProcessor == null)
+                if (_videoFolderProcessor == null)
                 {
-                    m_VideoFolderProcessor = ObjectFactory.CreateVideoFolderProcessor(this);
+                    _videoFolderProcessor = _objectFactory.CreateVideoFolderProcessor(this);
                 }
 
-                return m_VideoFolderProcessor;
+                return _videoFolderProcessor;
             }
         }
 
         public IArticleProcessor GetArticleProcessor(string seriesName, bool articleIsPrefix)
         {
-            if (ArticleProcessorStorage == null)
+            if (this.ArticleProcessorStorage == null)
             {
-                ArticleProcessorStorage = new ArticleProcessorStorage(this, ObjectFactory);
+                this.ArticleProcessorStorage = new ArticleProcessorStorage(this, _objectFactory);
             }
 
-            var articleProcessor = ArticleProcessorStorage.GetArticleProcessor(seriesName, articleIsPrefix);
+            var articleProcessor = this.ArticleProcessorStorage.GetArticleProcessor(seriesName, articleIsPrefix);
 
             return articleProcessor;
         }
@@ -111,23 +112,23 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_Helper == null)
+                if (_helper == null)
                 {
-                    m_Helper = ObjectFactory.CreateHelper();
+                    _helper = _objectFactory.CreateHelper();
                 }
 
-                return m_Helper;
+                return _helper;
             }
         }
 
         public ITuple GetTuple(string article, bool articleIsPrefix)
         {
-            if (TupleStorage == null)
+            if (this.TupleStorage == null)
             {
-                TupleStorage = new TupleStorage(this, ObjectFactory);
+                this.TupleStorage = new TupleStorage(this, _objectFactory);
             }
 
-            var tuple = TupleStorage.GetTuple(article, articleIsPrefix);
+            var tuple = this.TupleStorage.GetTuple(article, articleIsPrefix);
 
             return tuple;
         }
@@ -136,12 +137,12 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_ShortcutCreator == null)
+                if (_shortcutCreator == null)
                 {
-                    m_ShortcutCreator = ObjectFactory.CreateShortcutCreator(this);
+                    _shortcutCreator = _objectFactory.CreateShortcutCreator(this);
                 }
 
-                return m_ShortcutCreator;
+                return _shortcutCreator;
             }
         }
 
@@ -150,7 +151,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
             [DebuggerStepThrough]
             get
             {
-                return Program;
+                return _program;
             }
         }
 
@@ -158,12 +159,12 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_IOServices == null)
+                if (_ioServices == null)
                 {
-                    m_IOServices = ObjectFactory.CreateIOServices(this);
+                    _ioServices = _objectFactory.CreateIOServices(this);
                 }
 
-                return m_IOServices;
+                return _ioServices;
             }
         }
 
@@ -171,32 +172,32 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         {
             get
             {
-                if (m_Logger == null)
+                if (_logger == null)
                 {
-                    m_Logger = ObjectFactory.CreateLogger(this);
+                    _logger = _objectFactory.CreateLogger(this);
                 }
 
-                return m_Logger;
+                return _logger;
             }
         }
 
         public void Dispose()
         {
-            Arguments = null;
-            m_WarningsProcessor = null;
-            m_ArgumentsProcessor = null;
-            m_ShortcutFolderProcessor = null;
-            m_VideoFolderProcessor = null;
-            m_Helper = null;
-            ArticleProcessorStorage = null;
-            TupleStorage = null;
-            m_ShortcutCreator = null;
-            m_IOServices = null;
+            this.Arguments = null;
+            _warningsProcessor = null;
+            _argumentsProcessor = null;
+            _shortcutFolderProcessor = null;
+            _videoFolderProcessor = null;
+            _helper = null;
+            this.ArticleProcessorStorage = null;
+            this.TupleStorage = null;
+            _shortcutCreator = null;
+            _ioServices = null;
 
-            if (m_Logger != null)
+            if (_logger != null)
             {
-                m_Logger.Dispose();
-                m_Logger = null;
+                _logger.Dispose();
+                _logger = null;
             }
         }
     }

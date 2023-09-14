@@ -1,74 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using DoenaSoft.AbstractionLayer.IOServices;
 
 namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 {
     internal sealed class FileSystemMock
     {
-        private List<String> m_Files;
+        private readonly List<IFileInfo> _files;
 
-        private List<String> m_Folders;
+        private readonly List<IFolderInfo> _folders;
 
-        public IEnumerable<String> Files
+        public IEnumerable<IFileInfo> Files
         {
             get
             {
-                return (m_Files);
+                return _files;
             }
         }
 
-        public IEnumerable<String> Folders
+        public IEnumerable<IFolderInfo> Folders
         {
             get
             {
-                return (m_Folders);
+                return _folders;
             }
         }
 
         public FileSystemMock()
         {
-            m_Files = new List<String>();
-            m_Folders = new List<String>();
+            _files = new List<IFileInfo>();
+            _folders = new List<IFolderInfo>();
         }
 
-        internal void AddFolder(String path)
+        internal void AddFolder(string path)
         {
-            Boolean overwritten;
-
-            overwritten = Add(m_Folders, path);
-
-            if (overwritten)
+            if (!_folders.Any(f => f.FullName == path))
             {
-                throw (new NotSupportedException());
-            }
-        }
-
-        internal Boolean AddFile(String fileName)
-        {
-            Boolean overwritten;
-
-            overwritten = Add(m_Files, fileName);
-
-            return (overwritten);
-        }
-
-        private Boolean Add(List<String> list
-            , String path)
-        {
-            Boolean overwritten;
-
-            if (list.Contains(path))
-            {
-                overwritten = true;
+                _folders.Add(new TestFolderInfo(path, this));
             }
             else
             {
-                list.Add(path);
-
-                overwritten = false;
+                throw new NotSupportedException();
             }
+        }
 
-            return (overwritten);
+        internal void AddFile(string fileName, bool overwrite)
+        {
+            if (!_files.Any(f => f.FullName == fileName))
+            {
+                _files.Add(new TestFileInfo(fileName, this));
+            }
+            else if (!overwrite)
+            {
+                throw new NotSupportedException();
+            }
         }
     }
 }

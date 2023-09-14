@@ -12,14 +12,14 @@ namespace DoenaSoft.CreateShortcuts.Implementation
 
         public Tuple(string article, bool articleIsPrefix)
         {
-            Source = article + " ";
-            Target = ", " + article;
+            this.Source = article + " ";
+            this.Target = ", " + article;
 
             if (articleIsPrefix == false)
             {
-                var temp = Source;
-                Source = Target;
-                Target = temp;
+                var temp = this.Source;
+                this.Source = this.Target;
+                this.Target = temp;
             }
         }
     }

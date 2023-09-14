@@ -8,6 +8,12 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 {
     internal sealed partial class ArticleProcessor : IArticleProcessor
     {
+        private readonly bool _articleIsPrefix;
+
+        private readonly IObjectStorage _objectStorage;
+
+        private bool _wasProcessed;
+
         private static IEnumerable<string> Articles
         {
             get
@@ -22,29 +28,23 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
         public string SeriesName { get; private set; }
 
-        private readonly bool ArticleIsPrefix;
-
-        private readonly IObjectStorage ObjectStorage;
-
-        private bool WasProcessed;
-
         public ArticleProcessor(string seriesName, bool articleIsPrefix, IObjectStorage os)
         {
-            ArticleIsPrefix = articleIsPrefix;
-            SeriesName = seriesName;
-            ObjectStorage = os;
-            WasProcessed = false;
+            _articleIsPrefix = articleIsPrefix;
+            this.SeriesName = seriesName;
+            _objectStorage = os;
+            _wasProcessed = false;
         }
 
         public void Process()
         {
-            if (ObjectStorage.ArgumentsProcessor.AppendArticles && WasProcessed == false)
+            if (_objectStorage.ArgumentsProcessor.AppendArticles && _wasProcessed == false)
             {
-                var replaceFunc = GetReplaceFunc();
+                var replaceFunc = this.GetReplaceFunc();
 
                 foreach (var article in Articles)
                 {
-                    var tuple = ObjectStorage.GetTuple(article, ArticleIsPrefix);
+                    var tuple = _objectStorage.GetTuple(article, _articleIsPrefix);
 
                     if (replaceFunc(tuple))
                     {
@@ -52,13 +52,13 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
                     }
                 }
 
-                WasProcessed = true;
+                _wasProcessed = true;
             }
         }
 
         private Func<ITuple, bool> GetReplaceFunc()
         {
-            var replaceFunc = ArticleIsPrefix ? (Func<ITuple, bool>)ReplacePrefix : ReplaceSuffix;
+            var replaceFunc = _articleIsPrefix ? (Func<ITuple, bool>)this.ReplacePrefix : this.ReplaceSuffix;
 
             return replaceFunc;
         }
@@ -67,9 +67,10 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
         {
             var replaced = false;
 
-            if (SeriesName.StartsWith(tuple.Source, StringComparison.InvariantCultureIgnoreCase))
+            if (this.SeriesName.StartsWith(tuple.Source, StringComparison.InvariantCultureIgnoreCase))
             {
-                SeriesName = SeriesName.Substring(tuple.Source.Length) + tuple.Target;
+                this.SeriesName = this.SeriesName.Substring(tuple.Source.Length) + tuple.Target;
+
                 replaced = true;
             }
 
@@ -80,9 +81,10 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
         {
             var replaced = false;
 
-            if (SeriesName.EndsWith(tuple.Source, StringComparison.InvariantCultureIgnoreCase))
+            if (this.SeriesName.EndsWith(tuple.Source, StringComparison.InvariantCultureIgnoreCase))
             {
-                SeriesName = tuple.Target + SeriesName.Substring(0, SeriesName.Length - tuple.Source.Length);
+                this.SeriesName = tuple.Target + this.SeriesName.Substring(0, this.SeriesName.Length - tuple.Source.Length);
+
                 replaced = true;
             }
 

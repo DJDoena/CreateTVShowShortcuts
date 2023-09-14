@@ -5,16 +5,16 @@ namespace DoenaSoft.CreateShortcuts.Interfaces.Processors
 {
     public interface IProgram : IProcessor, IDisposable
     {
-        String RootFolderForShortcutFiles { get; }
+        string RootFolderForShortcutFiles { get; }
 
-        String SeasonFolderPattern { get; }
+        string SeasonFolderPattern { get; }
 
-        String StaffelFolderPattern { get; }
+        string StaffelFolderPattern { get; }
 
-        String SeriesNamePattern { get; }
+        string SeriesNamePattern { get; }
 
-        String ShortcutExtension { get; }
+        string ShortcutExtension { get; }
 
-        IEnumerable<String> VideoFileFolders { get; }
+        IEnumerable<string> VideoFileFolders { get; }
     }
 }

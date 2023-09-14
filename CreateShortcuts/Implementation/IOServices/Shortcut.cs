@@ -4,22 +4,22 @@ namespace DoenaSoft.AbstractionLayer.IOServices.Implementations
 {
     public sealed class Shortcut : IShortcut
     {
-        private readonly IWshShortcut WshShortcut;
+        private readonly IWshShortcut _wshShortcut;
 
-        private static readonly WshShell WshShell;
+        private static readonly WshShell _wshShell;
 
-        private readonly ILogger Logger;
+        private readonly ILogger _logger;
 
         static Shortcut()
         {
-            WshShell = new WshShell();
+            _wshShell = new WshShell();
         }
 
         public Shortcut(string linkFileName, ILogger logger)
         {
-            Logger = logger;
+            _logger = logger;
 
-            WshShortcut = (IWshShortcut)(WshShell.CreateShortcut(linkFileName));
+            _wshShortcut = (IWshShortcut)_wshShell.CreateShortcut(linkFileName);
         }
 
         public Shortcut(string linkFileName) : this(linkFileName, null)
@@ -28,34 +28,25 @@ namespace DoenaSoft.AbstractionLayer.IOServices.Implementations
 
         public string Description
         {
-            set
-            {
-                WshShortcut.Description = value;
-            }
+            set => _wshShortcut.Description = value;
         }
 
         public string TargetPath
         {
-            set
-            {
-                WshShortcut.TargetPath = value;
-            }
+            set => _wshShortcut.TargetPath = value;
         }
 
         public string WorkingFolder
         {
-            set
-            {
-                WshShortcut.WorkingDirectory = value;
-            }
+            set => _wshShortcut.WorkingDirectory = value;
         }
 
         public void Save()
         {
-            Logger?.WriteLine($"Create shortcut \"{WshShortcut.FullName}\"", true);
-            Logger?.WriteLine($"for             \"{WshShortcut.TargetPath}\"");
+            _logger?.WriteLine($"Create shortcut \"{_wshShortcut.FullName}\"", true);
+            _logger?.WriteLine($"for             \"{_wshShortcut.TargetPath}\"");
 
-            WshShortcut.Save();
+            _wshShortcut.Save();
         }
     }
 }

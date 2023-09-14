@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using DoenaSoft.AbstractionLayer.IOServices;
 
@@ -7,57 +6,49 @@ namespace DoenaSoft.CreateShortcuts.Tests.Processors
 {
     internal sealed class TestProgram2 : TestProgramBase
     {
-        private readonly String TestRoot;
+        private readonly string TestRoot;
 
-        private readonly String ShortcutRoot;
+        private readonly string ShortcutRoot;
 
-        private readonly String VideoFolderRoot1;
-        private readonly String VideoFolderRoot2;
+        private readonly string VideoFolderRoot1;
+        private readonly string VideoFolderRoot2;
 
-        public override String RootFolderForShortcutFiles
+        public override string RootFolderForShortcutFiles
         {
             get
             {
-                return (ShortcutRoot);
+                return ShortcutRoot;
             }
         }
 
-        public override IEnumerable<String> VideoFileFolders
+        public override IEnumerable<string> VideoFileFolders
         {
             get
             {
-                yield return (VideoFolderRoot1);
-                yield return (VideoFolderRoot2);
+                yield return VideoFolderRoot1;
+                yield return VideoFolderRoot2;
             }
         }
 
-        protected override String LogFileName
+        protected override IEnumerable<string> ExpectedWarnings
         {
             get
             {
-                return ("TestProgram2.log");
-            }
-        }
+                string path;
 
-        protected override IEnumerable<String> ExpectedWarnings
-        {
-            get
-            {
-                String path;
+                path = _objectStorage.IOServices.Path.Combine(ShortcutRoot, "Hurz", "Season 2.lnk");
 
-                path = ObjectStorage.IOServices.Path.Combine(ShortcutRoot, "Hurz", "Season 2.lnk");
-
-                yield return (String.Format("Remove \"{0}\"", path));
+                yield return string.Format("Remove \"{0}\"", path);
             }
         }
 
         public TestProgram2()
         {
-            String path;
-            UInt16 count;
+            string path;
+            ushort count;
             IIOServices ioServices;
 
-            ioServices = ObjectStorage.IOServices;
+            ioServices = _objectStorage.IOServices;
 
             TestRoot = ioServices.Path.Combine(ioServices.Path.GetTempPath(), "CreateShortcutTest");
 
@@ -74,7 +65,7 @@ namespace DoenaSoft.CreateShortcuts.Tests.Processors
 
             count = 1;
 
-            foreach (String videoFolderRoot in VideoFileFolders)
+            foreach (var videoFolderRoot in this.VideoFileFolders)
             {
                 ioServices.Folder.CreateFolder(videoFolderRoot);
 
@@ -94,18 +85,18 @@ namespace DoenaSoft.CreateShortcuts.Tests.Processors
 
         protected override void Assert()
         {
-            String path;
+            string path;
             IIOServices ioServices;
 
-            ioServices = ObjectStorage.IOServices;
+            ioServices = _objectStorage.IOServices;
 
             path = ioServices.Path.Combine(ShortcutRoot, "Hurz");
             Debug.Assert(ioServices.Folder.Exists(path));
 
-            AssertFileExists(ObjectStorage, path, "Season 1.lnk");
-            AssertFileExists(ObjectStorage, path, "Season 2.lnk");
+            this.AssertFileExists(_objectStorage, path, "Season 1.lnk");
+            this.AssertFileExists(_objectStorage, path, "Season 2.lnk");
 
-            AssertFileExists(ObjectStorage, VideoFolderRoot2, "Hurz", "Season 1.lnk");
+            this.AssertFileExists(_objectStorage, VideoFolderRoot2, "Hurz", "Season 1.lnk");
         }
     }
 }

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace DoenaSoft.CreateShortcuts.Interfaces.Processors
 {
     public interface IWarningsProcessor : IProcessor
     {
-        void AddWarnings(IEnumerable<String> warnings);
+        void AddWarnings(IEnumerable<string> warnings);
     }
 }

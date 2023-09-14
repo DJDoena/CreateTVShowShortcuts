@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
@@ -8,32 +7,32 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 {
     internal sealed class WarningsProcessor : IWarningsProcessor
     {
-        private List<IEnumerable<string>> Warnings;
+        private readonly List<IEnumerable<string>> _warnings;
 
-        private readonly IObjectStorage ObjectStorage;
+        private readonly IObjectStorage _objectStorage;
 
         public WarningsProcessor(IObjectStorage os)
         {
-            ObjectStorage = os;
-            Warnings = new List<IEnumerable<string>>(2);
+            _objectStorage = os;
+            _warnings = new List<IEnumerable<string>>(2);
         }
 
         public void AddWarnings(IEnumerable<string> warnings)
         {
-            Warnings.Add(warnings);
+            _warnings.Add(warnings);
         }
 
         public void Process()
         {
-            if (Warnings.Count > 0)
+            if (_warnings.Count > 0)
             {
                 List<string> warnings;
 
-                warnings = Warnings.SelectMany(item => item).ToList();
+                warnings = _warnings.SelectMany(item => item).ToList();
 
                 if (warnings.Count > 0)
                 {
-                    ILogger logger = ObjectStorage.Logger;
+                    var logger = _objectStorage.Logger;
 
                     foreach (var warning in warnings)
                     {
@@ -44,7 +43,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
                     logger.ReadLine();
                 }
 
-                Warnings.Clear();
+                _warnings.Clear();
             }
         }
     }

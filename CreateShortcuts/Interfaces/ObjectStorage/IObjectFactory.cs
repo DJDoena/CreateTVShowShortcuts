@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
@@ -16,23 +15,23 @@ namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
 
         IProcessor CreateVideoFolderProcessor(IObjectStorage os);
 
-        IArticleProcessor CreateArticleProcessor(String seriesName
-            , Boolean articleIsPrefix
+        IArticleProcessor CreateArticleProcessor(string seriesName
+            , bool articleIsPrefix
             , IObjectStorage os);
 
         IHelper CreateHelper();
 
         IObjectStorage CreateObjectStorage(IProgram program
-            , IEnumerable<String> arguments);
+            , IEnumerable<string> arguments);
 
-        ITuple CreateTuple(String article
-            , Boolean articleIsPrefix);
+        ITuple CreateTuple(string article
+            , bool articleIsPrefix);
 
         IShortcutCreator CreateShortcutCreator(IObjectStorage os);
 
         IIOServices CreateIOServices(IObjectStorage os);
 
-        IShortcut CreateShortcut(String linkFileName
+        IShortcut CreateShortcut(string linkFileName
             , IObjectStorage os);
 
         ILogger CreateLogger(IObjectStorage os);

@@ -17,65 +17,61 @@ namespace DoenaSoft.CreateShortcuts.Tests.ObjectStorage
 
         private readonly IEnumerable<SearchPatternMatch> SearchPatternMatches;
 
-        private readonly String LogFileName;
-
         public TestObjectFactory(IWarningsProcessor warningsProcessor
-            , IEnumerable<SearchPatternMatch> searchPatternMatches
-            , String logFileName)
+            , IEnumerable<SearchPatternMatch> searchPatternMatches)
         {
             WarningsProcessor = warningsProcessor;
             FileSystemMock = new FileSystemMock();
             SearchPatternMatches = searchPatternMatches;
-            LogFileName = logFileName;
         }
 
         public IWarningsProcessor CreateWarningsProcessor(IObjectStorage os)
         {
-            return (WarningsProcessor);
+            return WarningsProcessor;
         }
 
         public IArgumentsProcessor CreateArgumentsProessor(IObjectStorage os)
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
         public IProcessor CreateShortcutFolderProcessor(IObjectStorage os)
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
         public IProcessor CreateVideoFolderProcessor(IObjectStorage os)
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
-        public IArticleProcessor CreateArticleProcessor(String seriesName
-            , Boolean articleIsPrefix
+        public IArticleProcessor CreateArticleProcessor(string seriesName
+            , bool articleIsPrefix
             , IObjectStorage os)
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
         public IHelper CreateHelper()
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
         public IObjectStorage CreateObjectStorage(IProgram program
-            , IEnumerable<String> arguments)
+            , IEnumerable<string> arguments)
         {
-            return (new TestObjectStorage(program, arguments, FileSystemMock, SearchPatternMatches, LogFileName, this));
+            return new TestObjectStorage(program, arguments, FileSystemMock, SearchPatternMatches, this);
         }
 
-        public ITuple CreateTuple(String article
-            , Boolean articleIsPrefix)
+        public ITuple CreateTuple(string article
+            , bool articleIsPrefix)
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
         public IShortcutCreator CreateShortcutCreator(IObjectStorage os)
         {
-            throw (new NotImplementedException());
+            throw new NotImplementedException();
         }
 
         public IIOServices CreateIOServices(IObjectStorage os)
@@ -83,10 +79,10 @@ namespace DoenaSoft.CreateShortcuts.Tests.ObjectStorage
             throw new NotImplementedException();
         }
 
-        public IShortcut CreateShortcut(String linkFileName
+        public IShortcut CreateShortcut(string linkFileName
             , IObjectStorage os)
         {
-            return (new TestShortcut(linkFileName, FileSystemMock, os));
+            return new TestShortcut(linkFileName, FileSystemMock, os);
         }
 
         public ILogger CreateLogger(IObjectStorage os)

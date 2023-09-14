@@ -9,71 +9,71 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 {
     internal sealed class VideoFolderProcessor : IProcessor
     {
-        private readonly IObjectStorage ObjectStorage;
+        private readonly IObjectStorage _objectStorage;
 
         public VideoFolderProcessor(IObjectStorage os)
         {
-            ObjectStorage = os;
+            _objectStorage = os;
         }
 
         public void Process()
         {
-            foreach (var videoFileFolder in ObjectStorage.Program.VideoFileFolders)
+            foreach (var videoFileFolder in _objectStorage.Program.VideoFileFolders)
             {
-                IterateOverVideoFolder(videoFileFolder);
+                this.IterateOverVideoFolder(videoFileFolder);
             }
         }
 
         private void IterateOverVideoFolder(string videoFileFolder)
         {
-            RemoveExistingShortcuts(videoFileFolder);
+            this.RemoveExistingShortcuts(videoFileFolder);
 
-            var ioServices = ObjectStorage.IOServices;
+            var ioServices = _objectStorage.IOServices;
 
-            var seriesFoldersInShortcutFolder = ioServices.Folder.GetFolderNames(ObjectStorage.Program.RootFolderForShortcutFiles
-                , ObjectStorage.Program.SeriesNamePattern);
+            var seriesFoldersInShortcutFolder = ioServices.Folder.GetFolderNames(_objectStorage.Program.RootFolderForShortcutFiles
+                , _objectStorage.Program.SeriesNamePattern);
 
             foreach (var seriesFolderInShortcutFolder in seriesFoldersInShortcutFolder)
             {
                 var seriesFolderDI = ioServices.GetFolderInfo(seriesFolderInShortcutFolder);
 
-                if (ObjectStorage.Helper.IsSpecialFolder(seriesFolderDI))
+                if (_objectStorage.Helper.IsSpecialFolder(seriesFolderDI))
                 {
                     continue;
                 }
 
-                ProcessSeriesFolder(videoFileFolder, seriesFolderInShortcutFolder, seriesFolderDI.Name);
+                this.ProcessSeriesFolder(videoFileFolder, seriesFolderInShortcutFolder, seriesFolderDI.Name);
             }
         }
 
         private void ProcessSeriesFolder(string videoFileFolder, string seriesFolderInShortcutFolder, string seriesFolderName)
         {
-            var articleProcessor = ObjectStorage.GetArticleProcessor(seriesFolderName, true);
+            var articleProcessor = _objectStorage.GetArticleProcessor(seriesFolderName, true);
 
             articleProcessor.Process();
 
             seriesFolderName = articleProcessor.SeriesName;
 
-            var seriesFolderInVideoFolder = ObjectStorage.IOServices.Folder.GetFolderNames(videoFileFolder, seriesFolderName).FirstOrDefault();
+            var seriesFolderInVideoFolder = _objectStorage.IOServices.Folder.GetFolderNames(videoFileFolder, seriesFolderName).FirstOrDefault();
 
             if (FolderNameIsValid(seriesFolderInVideoFolder))
             {
-                var seasonFolderNames = GetSeasonFolderNames(seriesFolderInVideoFolder).ToList();
+                var seasonFolderNames = this.GetSeasonFolderNames(seriesFolderInVideoFolder).ToList();
 
                 if (seasonFolderNames.Count > 0)
                 {
-                    CopyShortcutsToSeriesFolder(seriesFolderInShortcutFolder, seriesFolderInVideoFolder, seasonFolderNames);
+                    this.CopyShortcutsToSeriesFolder(seriesFolderInShortcutFolder, seriesFolderInVideoFolder, seasonFolderNames);
                 }
             }
         }
 
         private void RemoveExistingShortcuts(string videoFileFolder)
         {
-            var existingShortcuts = ObjectStorage.IOServices.Folder.GetFileNames(videoFileFolder, "*.lnk", SearchOption.AllDirectories);
+            var existingShortcuts = _objectStorage.IOServices.Folder.GetFileNames(videoFileFolder, "*.lnk", SearchOption.AllDirectories);
 
             foreach (var file in existingShortcuts)
             {
-                ObjectStorage.IOServices.File.Delete(file);
+                _objectStorage.IOServices.File.Delete(file);
             }
         }
 
@@ -82,10 +82,10 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
         private IEnumerable<string> GetSeasonFolderNames(string seriesFolder)
         {
-            var ioServices = ObjectStorage.IOServices;
+            var ioServices = _objectStorage.IOServices;
 
-            var seasonFolderNames = ioServices.Folder.GetFolderNames(seriesFolder, ObjectStorage.Program.SeasonFolderPattern)
-                .Union(ioServices.Folder.GetFolderNames(seriesFolder, ObjectStorage.Program.StaffelFolderPattern));
+            var seasonFolderNames = ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.SeasonFolderPattern)
+                .Union(ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.StaffelFolderPattern));
 
             seasonFolderNames = seasonFolderNames.Select(directory => ioServices.GetFolderInfo(directory).Name);
 
@@ -94,19 +94,19 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
         private void CopyShortcutsToSeriesFolder(string seriesFolderInShortcutFolder, string seriesFolderInVideoFolder, IEnumerable<string> seasonFolderNames)
         {
-            var searchPattern = "*" + ObjectStorage.Program.ShortcutExtension;
+            var searchPattern = "*" + _objectStorage.Program.ShortcutExtension;
 
-            var shortcutFiles = ObjectStorage.IOServices.Folder.GetFileNames(seriesFolderInShortcutFolder, searchPattern);
+            var shortcutFiles = _objectStorage.IOServices.Folder.GetFileNames(seriesFolderInShortcutFolder, searchPattern);
 
             foreach (var shortcutFile in shortcutFiles)
             {
-                CopyShortcutToSeriesFolder(seriesFolderInVideoFolder, seasonFolderNames, shortcutFile);
+                this.CopyShortcutToSeriesFolder(seriesFolderInVideoFolder, seasonFolderNames, shortcutFile);
             }
         }
 
         private void CopyShortcutToSeriesFolder(string seriesFolderInVideoFolder, IEnumerable<string> seasonFolderNames, string shortcutFile)
         {
-            var ioServices = ObjectStorage.IOServices;
+            var ioServices = _objectStorage.IOServices;
 
             var shortcutFileFI = ioServices.GetFileInfo(shortcutFile);
 

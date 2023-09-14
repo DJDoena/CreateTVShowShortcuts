@@ -13,78 +13,38 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
     public sealed class ObjectFactory : IObjectFactory
     {
         public IWarningsProcessor CreateWarningsProcessor(IObjectStorage os)
-        {
-            var processor = new WarningsProcessor(os);
-
-            return processor;
-        }
+            => new WarningsProcessor(os);
 
         public IArgumentsProcessor CreateArgumentsProessor(IObjectStorage os)
-        {
-            var processor = new ArgumentsProcessor(os);
-
-            return processor;
-        }
+            => new ArgumentsProcessor(os);
 
         public IProcessor CreateShortcutFolderProcessor(IObjectStorage os)
-        {
-            var processor = new ShortcutFolderProcessor(os);
-
-            return processor;
-        }
+            => new ShortcutFolderProcessor(os);
 
         public IProcessor CreateVideoFolderProcessor(IObjectStorage os)
-        {
-            var processor = new VideoFolderProcessor(os);
-
-            return processor;
-        }
+            => new VideoFolderProcessor(os);
 
         public IArticleProcessor CreateArticleProcessor(string seriesName, bool articleIsPrefix, IObjectStorage os)
-        {
-            var processor = new ArticleProcessor(seriesName, articleIsPrefix, os);
-
-            return processor;
-        }
+            => new ArticleProcessor(seriesName, articleIsPrefix, os);
 
         public IHelper CreateHelper()
-        {
-            var helper = new Helper();
-
-            return helper;
-        }
+            => new Helper();
 
         public IObjectStorage CreateObjectStorage(IProgram program, IEnumerable<string> args)
-        {
-            var storage = new ObjectStorage(program, args, this);
-
-            return storage;
-        }
+            => new ObjectStorage(program, args, this);
 
         public ITuple CreateTuple(string article, bool articleIsPrefix)
-        {
-            var tuple = new Tuple(article, articleIsPrefix);
-
-            return tuple;
-        }
+            => new Tuple(article, articleIsPrefix);
 
         public IShortcutCreator CreateShortcutCreator(IObjectStorage os)
-        {
-            var shortcutCreator = new ShortcutCreator(os, this);
-
-            return shortcutCreator;
-        }
+            => new ShortcutCreator(os, this);
 
         public IIOServices CreateIOServices(IObjectStorage os)
             => new AbstractionLayer.IOServices.IOServices(os.Logger);
 
         public IShortcut CreateShortcut(string linkFileName
             , IObjectStorage os)
-        {
-            var shortcut = new Shortcut(linkFileName, os.Logger);
-
-            return shortcut;
-        }
+            => new Shortcut(linkFileName, os.Logger);
 
         public ILogger CreateLogger(IObjectStorage os)
         {

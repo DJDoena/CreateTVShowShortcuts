@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace DoenaSoft.CreateShortcuts.Interfaces
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces
 {
     public interface ITuple
     {
-        String Source { get; }
+        string Source { get; }
 
-        String Target { get; }
+        string Target { get; }
     }
 }

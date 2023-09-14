@@ -15,15 +15,15 @@ namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
         public ITuple GetTuple(string article, bool articleIsPrefix)
         {
 
-            if (Tuples == null)
+            if (this.Tuples == null)
             {
-                Tuples = new Dictionary<string, Dictionary<bool, ITuple>>();
+                this.Tuples = new Dictionary<string, Dictionary<bool, ITuple>>();
             }
 
-            if (Tuples.TryGetValue(article, out var innerDict) == false)
+            if (this.Tuples.TryGetValue(article, out var innerDict) == false)
             {
                 innerDict = new Dictionary<bool, ITuple>();
-                Tuples[article] = innerDict;
+                this.Tuples[article] = innerDict;
             }
 
             innerDict.TryGetValue(articleIsPrefix, out var tuple);
