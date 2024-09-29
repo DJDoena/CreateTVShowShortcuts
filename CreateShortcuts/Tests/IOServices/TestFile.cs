@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
@@ -10,6 +11,8 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
         private readonly FileSystemMock _fileSystemMock;
 
         private readonly IObjectStorage _objectStorage;
+
+        IIOServices IFile.IOServices => throw new NotImplementedException();
 
         public TestFile(FileSystemMock fileSystemMock
             , IObjectStorage os)
@@ -65,6 +68,11 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
         }
 
         public System.IO.Stream Create(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        StreamWriter IFile.CreateText(string path)
         {
             throw new NotImplementedException();
         }

@@ -12,18 +12,22 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
     {
         private readonly FileSystemMock _fileSystemMock;
 
-        private readonly Assembly _assembly;
+        private static readonly Assembly _assembly;
+
+        static TestIOServices()
+        {
+            _assembly = typeof(IIOServices).Assembly;
+        }
 
         public TestIOServices(FileSystemMock fileSystemMock
             , IEnumerable<SearchPatternMatch> searchPatternMatches
             , IObjectStorage os)
         {
             _fileSystemMock = fileSystemMock;
-            _assembly = typeof(IIOServices).Assembly;
 
-            this.Path = this.Instantiate<IPath>("DoenaSoft.AbstractionLayer.IOServices.Path");
+            this.Path = Instantiate<IPath>("DoenaSoft.AbstractionLayer.IOServices.Path", this);
 
-            this.Folder = new TestFolder(fileSystemMock, searchPatternMatches, os);
+            this.Folder = new TestFolder(this, fileSystemMock, searchPatternMatches, os);
 
             this.File = new TestFile(fileSystemMock, os);
         }
@@ -78,7 +82,7 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             throw new NotImplementedException();
         }
 
-        private T Instantiate<T>(string typeName
+        internal static T Instantiate<T>(string typeName
             , params object[] args)
         {
             var type = _assembly.GetType(typeName);

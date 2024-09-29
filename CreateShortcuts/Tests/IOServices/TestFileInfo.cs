@@ -132,7 +132,16 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 
         public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        IIOServices IFileInfo.IOServices => throw new NotImplementedException();
+
+        string IFileInfo.DirectoryName => throw new NotImplementedException();
+
         public bool Equals(IFileInfo other)
             => this.FullName.Equals(other?.FullName);
+
+        void IFileInfo.MoveTo(string targetFileName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -9,16 +9,20 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 {
     internal sealed class TestFolder : IFolder
     {
+        private readonly IIOServices _ioServices;
+
         private readonly FileSystemMock _fileSystemMock;
 
         private readonly IEnumerable<SearchPatternMatch> _searchPatternMatches;
 
         private readonly IObjectStorage _objectStorage;
 
-        public TestFolder(FileSystemMock fileSystemMock
+        public TestFolder(IIOServices ioServices
+            , FileSystemMock fileSystemMock
             , IEnumerable<SearchPatternMatch> searchPatternMatches
             , IObjectStorage os)
         {
+            _ioServices = ioServices;
             _fileSystemMock = fileSystemMock;
             _searchPatternMatches = searchPatternMatches;
             _objectStorage = os;
@@ -31,6 +35,10 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
                 throw new NotImplementedException();
             }
         }
+
+        IIOServices IFolder.IOServices => _ioServices;
+
+        string IFolder.WorkingFolderName => throw new NotImplementedException();
 
         public bool Exists(string path)
         {
@@ -52,7 +60,9 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 
             _fileSystemMock.AddFolder(path);
 
-            return new FolderInfo(path);
+            var folder = TestIOServices.Instantiate<IFolderInfo>("DoenaSoft.AbstractionLayer.IOServices.FolderInfo", _ioServices, path);
+
+            return folder;
         }
 
         public IEnumerable<string> GetFolderNames(string path
@@ -153,6 +163,21 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
         }
 
         public IEnumerable<IFileInfo> GetFileInfos(string folder, string searchPattern = "*.*", System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<IFolderInfo> IFolder.GetFolders(string folder, string searchPattern, System.IO.SearchOption searchOption)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<IFolderInfo> IFolder.GetDirectories(string folder, string searchPattern, System.IO.SearchOption searchOption)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<IFileInfo> IFolder.GetFiles(string folder, string searchPattern, System.IO.SearchOption searchOption)
         {
             throw new NotImplementedException();
         }

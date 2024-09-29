@@ -1,17 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<AssemblyName>CreateShortcutsTests</AssemblyName>
+		<RootNamespace>DoenaSoft.CreateShortcuts.Tests</RootNamespace>
+		<OutputType>Library</OutputType>
 		<TargetFrameworks>net481</TargetFrameworks>
 		<Platforms>x86</Platforms>
-		<OutputType>Library</OutputType>
-		<RootNamespace>DoenaSoft.CreateShortcuts</RootNamespace>
-		<AssemblyName>CreateShortcutsTests</AssemblyName>
+		<Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
+		<FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DoenaSoft.ToolBox" Version="2.0.0" />
-	  <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-	  <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+	  <PackageReference Include="DoenaSoft.ToolBox" Version="3.0.1" />
+	  <PackageReference Include="MSTest.TestAdapter" Version="3.6.0" />
+	  <PackageReference Include="MSTest.TestFramework" Version="3.6.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -7,6 +7,8 @@ namespace DoenaSoft.CreateShortcuts
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine(typeof(Program).Assembly.GetName().Version);
+
             try
             {
                 using (var program = new ActualProgram(args))

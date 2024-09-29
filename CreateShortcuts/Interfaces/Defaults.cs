@@ -21,6 +21,7 @@ namespace DoenaSoft.CreateShortcuts
                 yield return @"N:\Drive1\TVShows\";
                 yield return @"N:\Drive2\TVShows\";
                 yield return @"N:\Drive3\TVShows\";
+                yield return @"N:\Drive4\TVShows\";
             }
         }
     }

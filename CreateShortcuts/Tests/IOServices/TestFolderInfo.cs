@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DoenaSoft.AbstractionLayer.IOServices;
 
@@ -89,6 +90,10 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 
         public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        IIOServices IFolderInfo.IOServices => throw new NotImplementedException();
+
+        IDriveInfo IFolderInfo.Drive => throw new NotImplementedException();
+
         public void Create()
         {
             throw new NotImplementedException();
@@ -98,6 +103,21 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             => this.FullName.Equals(other?.FullName);
 
         public IEnumerable<IFileInfo> GetFileInfos(string searchPattern, System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<IFolderInfo> IFolderInfo.GetDirectories(string searchPattern, SearchOption searchOption)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<IFileInfo> IFolderInfo.GetFiles(string searchPattern, SearchOption searchOption)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<IFolderInfo> IFolderInfo.GetFolderInfos(string searchPattern, SearchOption searchOption)
         {
             throw new NotImplementedException();
         }
