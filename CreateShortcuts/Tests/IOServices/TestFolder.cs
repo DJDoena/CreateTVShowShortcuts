@@ -172,11 +172,6 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             throw new NotImplementedException();
         }
 
-        IEnumerable<IFolderInfo> IFolder.GetDirectories(string folder, string searchPattern, System.IO.SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<IFileInfo> IFolder.GetFiles(string folder, string searchPattern, System.IO.SearchOption searchOption)
         {
             throw new NotImplementedException();

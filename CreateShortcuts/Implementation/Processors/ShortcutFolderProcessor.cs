@@ -44,7 +44,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
         {
             var ioServices = _objectStorage.IOServices;
 
-            var seriesFolderDI = ioServices.GetFolderInfo(seriesFolder);
+            var seriesFolderDI = ioServices.GetFolder(seriesFolder);
 
             var seasonFolders = ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.SeasonFolderPattern)
                 .Union(ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.StaffelFolderPattern)).ToArray();

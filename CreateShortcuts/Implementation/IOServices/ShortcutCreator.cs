@@ -21,7 +21,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.IOServices
 
             string warning = null;
 
-            var seasonFolderDI = ioServices.GetFolderInfo(seasonFolder);
+            var seasonFolderDI = ioServices.GetFolder(seasonFolder);
 
             var linkFileName = seasonFolderDI.Name + _objectStorage.Program.ShortcutExtension;
 

@@ -12,8 +12,8 @@
 
 	<ItemGroup>
 	  <PackageReference Include="DoenaSoft.ToolBox" Version="3.0.1" />
-	  <PackageReference Include="MSTest.TestAdapter" Version="3.6.0" />
-	  <PackageReference Include="MSTest.TestFramework" Version="3.6.0" />
+	  <PackageReference Include="MSTest.TestAdapter" Version="3.8.2" />
+	  <PackageReference Include="MSTest.TestFramework" Version="3.8.2" />
 	</ItemGroup>
 
 	<ItemGroup>

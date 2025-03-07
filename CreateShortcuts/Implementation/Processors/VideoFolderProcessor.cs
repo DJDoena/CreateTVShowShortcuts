@@ -35,7 +35,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
             foreach (var seriesFolderInShortcutFolder in seriesFoldersInShortcutFolder)
             {
-                var seriesFolderDI = ioServices.GetFolderInfo(seriesFolderInShortcutFolder);
+                var seriesFolderDI = ioServices.GetFolder(seriesFolderInShortcutFolder);
 
                 if (_objectStorage.Helper.IsSpecialFolder(seriesFolderDI))
                 {
@@ -87,7 +87,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
             var seasonFolderNames = ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.SeasonFolderPattern)
                 .Union(ioServices.Folder.GetFolderNames(seriesFolder, _objectStorage.Program.StaffelFolderPattern));
 
-            seasonFolderNames = seasonFolderNames.Select(directory => ioServices.GetFolderInfo(directory).Name);
+            seasonFolderNames = seasonFolderNames.Select(directory => ioServices.GetFolder(directory).Name);
 
             return seasonFolderNames;
         }
@@ -108,7 +108,7 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
         {
             var ioServices = _objectStorage.IOServices;
 
-            var shortcutFileFI = ioServices.GetFileInfo(shortcutFile);
+            var shortcutFileFI = ioServices.GetFile(shortcutFile);
 
             var shortcutName = GetShortcutName(shortcutFileFI);
 
@@ -118,16 +118,22 @@ namespace DoenaSoft.CreateShortcuts.Implementation.Processors
 
                 ioServices.File.Copy(shortcutFile, targetFile);
 
-                var targetFileFI = ioServices.GetFileInfo(targetFile);
+                var targetFileFI = ioServices.GetFile(targetFile);
 
                 var folderInfo = targetFileFI.Folder;
 
                 targetFileFI.CreationTime = folderInfo.CreationTime;
                 targetFileFI.LastWriteTime = folderInfo.CreationTime;
 
-                var subFolderInfos = ioServices.Folder.GetFolderNames(folderInfo.FullName).Select(fi => ioServices.GetFolderInfo(fi)).ToList();
+                var subFolderInfos = ioServices.Folder
+                    .GetFolderNames(folderInfo.FullName)
+                    .Select(ioServices.GetFolder)
+                    .ToList();
 
-                var fileInfos = ioServices.Folder.GetFileNames(folderInfo.FullName).Select(fi => ioServices.GetFileInfo(fi)).ToList();
+                var fileInfos = ioServices.Folder
+                    .GetFileNames(folderInfo.FullName)
+                    .Select(ioServices.GetFile)
+                    .ToList();
 
                 try
                 {

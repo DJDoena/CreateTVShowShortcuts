@@ -38,14 +38,14 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 
         public IFile File { get; private set; }
 
-        public IFileInfo GetFileInfo(string fileName)
+        public IFileInfo GetFile(string fileName)
         {
             var fi = _fileSystemMock.Files.FirstOrDefault(f => f.FullName == fileName);
 
             return fi ?? new TestFileInfo(fileName, _fileSystemMock);
         }
 
-        public IFolderInfo GetFolderInfo(string path)
+        public IFolderInfo GetFolder(string path)
         {
             var fi = _fileSystemMock.Folders.FirstOrDefault(f => f.FullName == path);
 
@@ -60,12 +60,12 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IDriveInfo> GetDriveInfos(System.IO.DriveType? driveType)
+        public IEnumerable<IDriveInfo> GetDrives(System.IO.DriveType? driveType)
         {
             throw new NotImplementedException();
         }
 
-        public IDriveInfo GetDriveInfo(string driveLetter)
+        public IDriveInfo GetDrive(string driveLetter)
         {
             throw new NotImplementedException();
         }

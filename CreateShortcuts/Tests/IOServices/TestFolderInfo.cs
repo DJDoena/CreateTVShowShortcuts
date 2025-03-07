@@ -22,13 +22,20 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             _timestamp = DateTime.Now;
         }
 
-        public string Name => this.FullName.Split('\\').Last();
+        public string Name
+            => this.FullName.Split('\\').Last();
 
-        public IFolderInfo Root => new TestFolderInfo(this.FullName.Split('\\').First(), _fileSystemMock);
+        public IFolderInfo Root
+            => new TestFolderInfo(this.FullName.Split('\\').First(), _fileSystemMock);
 
-        public bool Exists => _fileSystemMock.Folders.Any(f => f.FullName == this.FullName);
+        public IFolderInfo Parent
+            => throw new NotImplementedException();
 
-        public string FullName => _path;
+        public bool Exists
+            => _fileSystemMock.Folders.Any(f => f.FullName == this.FullName);
+
+        public string FullName
+            => _path;
 
         public DateTime LastWriteTime
         {
@@ -102,22 +109,12 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
         public bool Equals(IFolderInfo other)
             => this.FullName.Equals(other?.FullName);
 
-        public IEnumerable<IFileInfo> GetFileInfos(string searchPattern, System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
+        IEnumerable<IFileInfo> IFolderInfo.GetFiles(string searchPattern, System.IO.SearchOption searchOption)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<IFolderInfo> IFolderInfo.GetDirectories(string searchPattern, SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<IFileInfo> IFolderInfo.GetFiles(string searchPattern, SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<IFolderInfo> IFolderInfo.GetFolderInfos(string searchPattern, SearchOption searchOption)
+        IEnumerable<IFolderInfo> IFolderInfo.GetFolders(string searchPattern, SearchOption searchOption)
         {
             throw new NotImplementedException();
         }
