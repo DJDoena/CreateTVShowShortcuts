@@ -2,73 +2,71 @@
 using DoenaSoft.CreateShortcuts.Implementation.ObjectStorage;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
-namespace DoenaSoft.CreateShortcuts
+namespace DoenaSoft.CreateShortcuts;
+
+public sealed class ActualProgram : IProgram
 {
-    public sealed class ActualProgram : IProgram
+    private readonly IEnumerable<string> _arguments;
+
+    public ActualProgram(IEnumerable<string> arguments)
     {
-        private readonly IEnumerable<string> _arguments;
+        _arguments = arguments;
+    }
 
-        public ActualProgram(IEnumerable<string> arguments)
+    public string RootFolderForShortcutFiles
+        => Defaults.RootFolderForShortcutFiles;
+
+    public string SeasonFolderPattern
+        => Defaults.SeasonFolderPattern;
+
+    public string StaffelFolderPattern
+        => Defaults.StaffelFolderPattern;
+
+    public string SeriesNamePattern
+        => Defaults.SeriesNamePattern;
+
+    public string ShortcutExtension
+        => Defaults.ShortcutExtension;
+
+    public IEnumerable<string> VideoFileFolders
+        => Defaults.VideoFileFolders;
+
+    public void Process()
+    {
+        var of = new ObjectFactory();
+
+        using var os = of.CreateObjectStorage(this, _arguments);
+
+        var ap = os.ArgumentsProcessor;
+
+        ap.Process();
+
+        if (ap.ShowHelp)
         {
-            _arguments = arguments;
+            ap.PrintArguments();
+
+            return;
         }
 
-        public string RootFolderForShortcutFiles
-            => Defaults.RootFolderForShortcutFiles;
+        var wp = os.WarningsProcessor;
 
-        public string SeasonFolderPattern
-            => Defaults.SeasonFolderPattern;
+        wp.Process();
 
-        public string StaffelFolderPattern
-            => Defaults.StaffelFolderPattern;
-
-        public string SeriesNamePattern
-            => Defaults.SeriesNamePattern;
-
-        public string ShortcutExtension
-            => Defaults.ShortcutExtension;
-
-        public IEnumerable<string> VideoFileFolders
-            => Defaults.VideoFileFolders;
-
-        public void Process()
+        if (os.IOServices.Folder.Exists(this.RootFolderForShortcutFiles))
         {
-            var of = new ObjectFactory();
-
-            using (var os = of.CreateObjectStorage(this, _arguments))
-            {
-                var ap = os.ArgumentsProcessor;
-
-                ap.Process();
-
-                if (ap.ShowHelp)
-                {
-                    ap.PrintArguments();
-
-                    return;
-                }
-
-                var wp = os.WarningsProcessor;
-
-                wp.Process();
-
-                if (os.IOServices.Folder.Exists(this.RootFolderForShortcutFiles))
-                {
-                    os.IOServices.Folder.Delete(this.RootFolderForShortcutFiles);
-                }
-
-                os.IOServices.Folder.CreateFolder(this.RootFolderForShortcutFiles);
-
-                os.ShortcutFolderProcessor.Process();
-
-                os.VideoFolderProcessor.Process();
-
-                wp.Process();
-            }
+            os.IOServices.Folder.Delete(this.RootFolderForShortcutFiles);
         }
 
-        public void Dispose()
-        {
-        }
+        os.IOServices.Folder.CreateFolder(this.RootFolderForShortcutFiles);
+
+        os.ShortcutFolderProcessor.Process();
+
+        os.VideoFolderProcessor.Process();
+
+        wp.Process();
+    }
+
+    public void Dispose()
+    {
     }
 }

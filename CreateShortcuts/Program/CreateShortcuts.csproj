@@ -6,9 +6,15 @@
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net481</TargetFrameworks>
 		<Platforms>x86</Platforms>
+		<LangVersion>12.0</LangVersion>
 		<Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
 		<FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
+		<ApplicationIcon>djdsoft.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="djdsoft.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Implementation\CreateShortcuts.Implementation.csproj" />

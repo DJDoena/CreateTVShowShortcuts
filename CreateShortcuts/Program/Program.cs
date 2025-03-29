@@ -1,30 +1,28 @@
 ﻿using System;
 using DoenaSoft.CreateShortcuts.Interfaces;
 
-namespace DoenaSoft.CreateShortcuts
+namespace DoenaSoft.CreateShortcuts;
+
+public static class Program
 {
-    public static class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        Console.WriteLine($"v{typeof(Program).Assembly.GetName().Version}");
+
+        try
         {
-            Console.WriteLine(typeof(Program).Assembly.GetName().Version);
+            using var program = new ActualProgram(args);
 
-            try
-            {
-                using (var program = new ActualProgram(args))
-                {
-                    program.PrintDefaults();
+            program.PrintDefaults();
 
-                    program.Process();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+            program.Process();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
 
-                Console.ReadLine();
-            }
+            Console.ReadLine();
         }
     }
 }
