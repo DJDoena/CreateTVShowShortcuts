@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="CreateShortcuts/Implementation/CreateShortcuts.Implementation.csproj">
+    <Platform Project="x86" />
+  </Project>
+  <Project Path="CreateShortcuts/Interfaces/CreateShortcuts.Interfaces.csproj">
+    <Platform Project="x86" />
+  </Project>
+  <Project Path="CreateShortcuts/Program/CreateShortcuts.csproj">
+    <Platform Project="x86" />
+  </Project>
+  <Project Path="CreateShortcuts/Tests/CreateShortcuts.Tests.csproj">
+    <Platform Project="x86" />
+  </Project>
+</Solution>
