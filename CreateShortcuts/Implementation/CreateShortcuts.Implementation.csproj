@@ -23,6 +23,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="DoenaSoft.AbstractionLayer.IO.Default" Version="1.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Interfaces\CreateShortcuts.Interfaces.csproj" />
 	</ItemGroup>
 

@@ -36,9 +36,11 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             }
         }
 
-        IIOServices IFolder.IOServices => _ioServices;
+        IIOServices IIOServiceItem.IOServices => _ioServices;
 
         string IFolder.WorkingFolderName => throw new NotImplementedException();
+
+        public IIOServices IOServices => throw new NotImplementedException();
 
         public bool Exists(string path)
         {
@@ -173,6 +175,36 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
         }
 
         IEnumerable<IFileInfo> IFolder.GetFiles(string folder, string searchPattern, System.IO.SearchOption searchOption)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Move(string sourceFolderName, string destFolderName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetCurrentFolder()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetCurrentFolder(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> GetFolders(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> GetFiles(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFolderInfo GetParent(string path)
         {
             throw new NotImplementedException();
         }

@@ -96,8 +96,11 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
         public DateTime LastAccessTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public FileAttributes Attributes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        IIOServices IFolderInfo.IOServices => throw new NotImplementedException();
+        public IIOServices IOServices => throw new NotImplementedException();
+
+        IIOServices IIOServiceItem.IOServices => throw new NotImplementedException();
 
         IDriveInfo IFolderInfo.Drive => throw new NotImplementedException();
 
@@ -106,8 +109,43 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
             throw new NotImplementedException();
         }
 
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(bool recursive)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Equals(IFolderInfo other)
             => this.FullName.Equals(other?.FullName);
+
+        public IEnumerable<IFileInfo> GetFiles()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IFileInfo> GetFiles(string searchPattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IFolderInfo> GetFolders()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IFolderInfo> GetFolders(string searchPattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveTo(string destFolderName)
+        {
+            throw new NotImplementedException();
+        }
 
         IEnumerable<IFileInfo> IFolderInfo.GetFiles(string searchPattern, System.IO.SearchOption searchOption)
         {
