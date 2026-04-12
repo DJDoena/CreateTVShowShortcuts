@@ -91,5 +91,10 @@ namespace DoenaSoft.CreateShortcuts.Tests.IOServices
 
             return instance;
         }
+
+        public IRenameQueue CreateRenameQueue(ILogger logger = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -5,13 +5,13 @@
 		<RootNamespace>DoenaSoft.CreateShortcuts</RootNamespace>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net481</TargetFrameworks>
-		<Platforms>x86</Platforms>
+		<LangVersion>latest</LangVersion>
 		<Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</Version>
 		<FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DoenaSoft.AbstractionLayer.IO" Version="5.0.1" />
+	  <PackageReference Include="DoenaSoft.AbstractionLayer.IO" Version="6.0.4" />
 	</ItemGroup>
 
 </Project>
