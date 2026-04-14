@@ -1,41 +1,55 @@
 ﻿using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
 
-namespace DoenaSoft.CreateShortcuts.Tests.IOServices
+namespace DoenaSoft.CreateShortcuts.Tests.IOServices;
+
+internal sealed class TestShortcut : IShortcut
 {
-    internal sealed class TestShortcut : IShortcut
+    private readonly string FileName;
+
+    private readonly FileSystemMock FileSystemMock;
+
+    private readonly IObjectStorage ObjectStorage;
+
+    public TestShortcut(string fileName
+        , FileSystemMock fileSystemMock
+        , IObjectStorage os)
     {
-        private readonly string FileName;
+        FileName = fileName;
+        FileSystemMock = fileSystemMock;
+        ObjectStorage = os;
+    }
 
-        private readonly FileSystemMock FileSystemMock;
+    public string TargetPath { get; set; }
 
-        private readonly IObjectStorage ObjectStorage;
+    public string WorkingFolder { get; set; }
 
-        public TestShortcut(string fileName
-            , FileSystemMock fileSystemMock
-            , IObjectStorage os)
-        {
-            FileName = fileName;
-            FileSystemMock = fileSystemMock;
-            ObjectStorage = os;
-        }
+    public string Description { get; set; }
 
-        public string TargetPath { private get; set; }
+    public string Arguments { get; set; }
 
-        public string WorkingFolder { private get; set; }
+    public string FullName { get; }
 
-        public string Description { private get; set; }
+    public string Hotkey { get; set; }
 
-        public void Save()
-        {
-            ILogger logger;
+    public string IconLocation { get; set; }
 
-            logger = ObjectStorage.Logger;
+    public int WindowStyle { get; set; }
 
-            logger.WriteLine("Create virtual shortcut \"{0}\"", true, FileName);
-            logger.WriteLine("for virtual             \"{0}\"", this.TargetPath);
+    public void Save()
+    {
+        ILogger logger;
 
-            FileSystemMock.AddFile(FileName, true);
-        }
+        logger = ObjectStorage.Logger;
+
+        logger.WriteLine("Create virtual shortcut \"{0}\"", true, FileName);
+        logger.WriteLine("for virtual             \"{0}\"", this.TargetPath);
+
+        FileSystemMock.AddFile(FileName, true);
+    }
+
+    public void Load(string pathLink)
+    {
+        throw new System.NotImplementedException();
     }
 }
