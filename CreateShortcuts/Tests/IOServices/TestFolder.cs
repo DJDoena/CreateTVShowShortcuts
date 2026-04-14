@@ -5,208 +5,207 @@ using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
 using DoenaSoft.ToolBox.Extensions;
 
-namespace DoenaSoft.CreateShortcuts.Tests.IOServices
+namespace DoenaSoft.CreateShortcuts.Tests.IOServices;
+
+internal sealed class TestFolder : IFolder
 {
-    internal sealed class TestFolder : IFolder
+    private readonly IIOServices _ioServices;
+
+    private readonly FileSystemMock _fileSystemMock;
+
+    private readonly IEnumerable<SearchPatternMatch> _searchPatternMatches;
+
+    private readonly IObjectStorage _objectStorage;
+
+    public TestFolder(IIOServices ioServices
+        , FileSystemMock fileSystemMock
+        , IEnumerable<SearchPatternMatch> searchPatternMatches
+        , IObjectStorage os)
     {
-        private readonly IIOServices _ioServices;
+        _ioServices = ioServices;
+        _fileSystemMock = fileSystemMock;
+        _searchPatternMatches = searchPatternMatches;
+        _objectStorage = os;
+    }
 
-        private readonly FileSystemMock _fileSystemMock;
-
-        private readonly IEnumerable<SearchPatternMatch> _searchPatternMatches;
-
-        private readonly IObjectStorage _objectStorage;
-
-        public TestFolder(IIOServices ioServices
-            , FileSystemMock fileSystemMock
-            , IEnumerable<SearchPatternMatch> searchPatternMatches
-            , IObjectStorage os)
+    public string WorkingFolder
+    {
+        get
         {
-            _ioServices = ioServices;
-            _fileSystemMock = fileSystemMock;
-            _searchPatternMatches = searchPatternMatches;
-            _objectStorage = os;
+            throw new NotImplementedException();
+        }
+    }
+
+    IIOServices IIOServiceItem.IOServices => _ioServices;
+
+    string IFolder.WorkingFolderName => throw new NotImplementedException();
+
+    public IIOServices IOServices => throw new NotImplementedException();
+
+    public bool Exists(string path)
+    {
+        bool exists;
+
+        exists = _fileSystemMock.Folders.Where(item => item.FullName == path).HasItems();
+
+        return exists;
+    }
+
+    public void Delete(string path)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IFolderInfo CreateFolder(string path)
+    {
+        _objectStorage.Logger.WriteLine("Create virtual folder \"{0}\"", path);
+
+        _fileSystemMock.AddFolder(path);
+
+        var folder = TestIOServices.Instantiate<IFolderInfo>("DoenaSoft.AbstractionLayer.IOServices.FolderInfo", _ioServices, path);
+
+        return folder;
+    }
+
+    public IEnumerable<string> GetFolderNames(string path
+        , string searchPattern
+        , System.IO.SearchOption searchOption)
+    {
+        IEnumerable<string> filtered;
+        string[] folders;
+
+        path = path + @"\";
+
+        filtered = _fileSystemMock.Folders.Select(f => f.FullName);
+        filtered = filtered.Where(item => item.StartsWith(path));
+        filtered = filtered.Where(item => this.MatchesSearchPattern(item, path, searchPattern));
+
+        filtered = filtered.OrderBy(item => item);
+
+        folders = filtered.ToArray();
+
+        return folders;
+    }
+
+    private bool MatchesSearchPattern(string item
+        , string path
+        , string searchPattern)
+    {
+        item = item.Replace(path, string.Empty);
+
+        if (item.Contains(@"\"))
+        {
+            return false;
         }
 
-        public string WorkingFolder
+        foreach (var match in _searchPatternMatches)
         {
-            get
+            if (match.Pattern == searchPattern)
             {
-                throw new NotImplementedException();
+                bool isMatch;
+
+                isMatch = MatchesSearchPattern(item, match);
+
+                return isMatch;
             }
         }
 
-        IIOServices IIOServiceItem.IOServices => _ioServices;
+        return item == searchPattern;
+    }
 
-        string IFolder.WorkingFolderName => throw new NotImplementedException();
+    private static bool MatchesSearchPattern(string item
+        , SearchPatternMatch match)
+    {
+        bool isMatch;
 
-        public IIOServices IOServices => throw new NotImplementedException();
-
-        public bool Exists(string path)
+        if (match.Position == SearchPatternMatch.StringPosition.Start)
         {
-            bool exists;
-
-            exists = _fileSystemMock.Folders.Where(item => item.FullName == path).HasItems();
-
-            return exists;
+            isMatch = item.StartsWith(match.Text);
+        }
+        else if (match.Position == SearchPatternMatch.StringPosition.End)
+        {
+            isMatch = item.EndsWith(match.Text);
+        }
+        else
+        {
+            isMatch = item.Contains(match.Text);
         }
 
-        public void Delete(string path)
-        {
-            throw new NotImplementedException();
-        }
+        return isMatch;
+    }
 
-        public IFolderInfo CreateFolder(string path)
-        {
-            _objectStorage.Logger.WriteLine("Create virtual folder \"{0}\"", path);
+    public IEnumerable<string> GetFileNames(string path
+        , string searchPattern
+        , System.IO.SearchOption searchOption)
+    {
+        IEnumerable<string> filtered;
+        string[] files;
 
-            _fileSystemMock.AddFolder(path);
+        path = path + @"\";
 
-            var folder = TestIOServices.Instantiate<IFolderInfo>("DoenaSoft.AbstractionLayer.IOServices.FolderInfo", _ioServices, path);
+        filtered = _fileSystemMock.Files.Select(f => f.FullName);
+        filtered = filtered.Where(item => item.StartsWith(path));
+        filtered = filtered = filtered.Where(item => this.MatchesSearchPattern(item, path, searchPattern));
 
-            return folder;
-        }
+        filtered = filtered.OrderBy(item => item);
 
-        public IEnumerable<string> GetFolderNames(string path
-            , string searchPattern
-            , System.IO.SearchOption searchOption)
-        {
-            IEnumerable<string> filtered;
-            string[] folders;
+        files = filtered.ToArray();
 
-            path = path + @"\";
+        return files;
+    }
 
-            filtered = _fileSystemMock.Folders.Select(f => f.FullName);
-            filtered = filtered.Where(item => item.StartsWith(path));
-            filtered = filtered.Where(item => this.MatchesSearchPattern(item, path, searchPattern));
+    public string GetFullPath(string folder)
+    {
+        throw new NotImplementedException();
+    }
 
-            filtered = filtered.OrderBy(item => item);
+    public IEnumerable<IFolderInfo> GetFolderInfos(string folder, string searchPattern = "*.*", System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
+    {
+        throw new NotImplementedException();
+    }
 
-            folders = filtered.ToArray();
+    public IEnumerable<IFileInfo> GetFileInfos(string folder, string searchPattern = "*.*", System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
+    {
+        throw new NotImplementedException();
+    }
 
-            return folders;
-        }
+    IEnumerable<IFolderInfo> IFolder.GetFolders(string folder, string searchPattern, System.IO.SearchOption searchOption)
+    {
+        throw new NotImplementedException();
+    }
 
-        private bool MatchesSearchPattern(string item
-            , string path
-            , string searchPattern)
-        {
-            item = item.Replace(path, string.Empty);
+    IEnumerable<IFileInfo> IFolder.GetFiles(string folder, string searchPattern, System.IO.SearchOption searchOption)
+    {
+        throw new NotImplementedException();
+    }
 
-            if (item.Contains(@"\"))
-            {
-                return false;
-            }
+    public void Move(string sourceFolderName, string destFolderName)
+    {
+        throw new NotImplementedException();
+    }
 
-            foreach (var match in _searchPatternMatches)
-            {
-                if (match.Pattern == searchPattern)
-                {
-                    bool isMatch;
+    public string GetCurrentFolder()
+    {
+        throw new NotImplementedException();
+    }
 
-                    isMatch = MatchesSearchPattern(item, match);
+    public void SetCurrentFolder(string path)
+    {
+        throw new NotImplementedException();
+    }
 
-                    return isMatch;
-                }
-            }
+    public IEnumerable<string> GetFolders(string path)
+    {
+        throw new NotImplementedException();
+    }
 
-            return item == searchPattern;
-        }
+    public IEnumerable<string> GetFiles(string path)
+    {
+        throw new NotImplementedException();
+    }
 
-        private static bool MatchesSearchPattern(string item
-            , SearchPatternMatch match)
-        {
-            bool isMatch;
-
-            if (match.Position == SearchPatternMatch.StringPosition.Start)
-            {
-                isMatch = item.StartsWith(match.Text);
-            }
-            else if (match.Position == SearchPatternMatch.StringPosition.End)
-            {
-                isMatch = item.EndsWith(match.Text);
-            }
-            else
-            {
-                isMatch = item.Contains(match.Text);
-            }
-
-            return isMatch;
-        }
-
-        public IEnumerable<string> GetFileNames(string path
-            , string searchPattern
-            , System.IO.SearchOption searchOption)
-        {
-            IEnumerable<string> filtered;
-            string[] files;
-
-            path = path + @"\";
-
-            filtered = _fileSystemMock.Files.Select(f => f.FullName);
-            filtered = filtered.Where(item => item.StartsWith(path));
-            filtered = filtered = filtered.Where(item => this.MatchesSearchPattern(item, path, searchPattern));
-
-            filtered = filtered.OrderBy(item => item);
-
-            files = filtered.ToArray();
-
-            return files;
-        }
-
-        public string GetFullPath(string folder)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IFolderInfo> GetFolderInfos(string folder, string searchPattern = "*.*", System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IFileInfo> GetFileInfos(string folder, string searchPattern = "*.*", System.IO.SearchOption searchOption = System.IO.SearchOption.TopDirectoryOnly)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<IFolderInfo> IFolder.GetFolders(string folder, string searchPattern, System.IO.SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<IFileInfo> IFolder.GetFiles(string folder, string searchPattern, System.IO.SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Move(string sourceFolderName, string destFolderName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetCurrentFolder()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetCurrentFolder(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<string> GetFolders(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<string> GetFiles(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFolderInfo GetParent(string path)
-        {
-            throw new NotImplementedException();
-        }
+    public IFolderInfo GetParent(string path)
+    {
+        throw new NotImplementedException();
     }
 }

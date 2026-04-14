@@ -3,207 +3,206 @@ using System.IO;
 using System.Linq;
 using DoenaSoft.AbstractionLayer.IOServices;
 
-namespace DoenaSoft.CreateShortcuts.Tests.IOServices
+namespace DoenaSoft.CreateShortcuts.Tests.IOServices;
+
+internal sealed class TestFileInfo : IFileInfo
 {
-    internal sealed class TestFileInfo : IFileInfo
+    private readonly string _fullName;
+
+    private readonly FileSystemMock _fileSystemMock;
+
+    private DateTime _timestamp;
+
+    public TestFileInfo(string fullName
+        , FileSystemMock fileSystemMock)
     {
-        private readonly string _fullName;
+        _fullName = fullName;
+        _fileSystemMock = fileSystemMock;
+        _timestamp = DateTime.Now;
+    }
 
-        private readonly FileSystemMock _fileSystemMock;
+    public string Name => this.FullName.Split('\\').Last();
 
-        private DateTime _timestamp;
-
-        public TestFileInfo(string fullName
-            , FileSystemMock fileSystemMock)
+    public string Extension
+    {
+        get
         {
-            _fullName = fullName;
-            _fileSystemMock = fileSystemMock;
-            _timestamp = DateTime.Now;
+            var split = this.FullName.Split('.');
+
+            var extension = split.Length > 1
+                ? $".{split.Last()}"
+                : string.Empty;
+
+            return extension;
         }
+    }
 
-        public string Name => this.FullName.Split('\\').Last();
+    public string FullName => _fullName;
 
-        public string Extension
+    public IFolderInfo Folder => new TestFolderInfo(this.FolderName, _fileSystemMock);
+
+    public string FolderName
+    {
+        get
         {
-            get
+            var split = this.FullName.Split('\\');
+
+            var folderName = split.Length > 1
+                ? this.FullName.Substring(0, this.FullName.LastIndexOf("\\"))
+                : string.Empty;
+
+            return folderName;
+        }
+    }
+
+    public string NameWithoutExtension
+    {
+        get
+        {
+            var split = this.FullName.Split('.');
+
+            var nameWithoutExtension = split.Length > 1
+                ? this.Name.Substring(0, this.Name.LastIndexOf("."))
+                : string.Empty;
+
+            return nameWithoutExtension;
+        }
+    }
+
+    public bool Exists => _fileSystemMock.Files.Any(f => f.FullName == this.FullName);
+
+    public ulong Length => throw new NotImplementedException();
+
+    public DateTime LastWriteTime
+    {
+        get
+        {
+            if (this.Exists)
             {
-                var split = this.FullName.Split('.');
-
-                var extension = split.Length > 1
-                    ? $".{split.Last()}"
-                    : string.Empty;
-
-                return extension;
+                return _timestamp;
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
-
-        public string FullName => _fullName;
-
-        public IFolderInfo Folder => new TestFolderInfo(this.FolderName, _fileSystemMock);
-
-        public string FolderName
+        set
         {
-            get
+            if (this.Exists)
             {
-                var split = this.FullName.Split('\\');
-
-                var folderName = split.Length > 1
-                    ? this.FullName.Substring(0, this.FullName.LastIndexOf("\\"))
-                    : string.Empty;
-
-                return folderName;
+                _timestamp = value;
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
+    }
 
-        public string NameWithoutExtension
+    public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public DateTime CreationTime
+    {
+        get
         {
-            get
+            if (this.Exists)
             {
-                var split = this.FullName.Split('.');
-
-                var nameWithoutExtension = split.Length > 1
-                    ? this.Name.Substring(0, this.Name.LastIndexOf("."))
-                    : string.Empty;
-
-                return nameWithoutExtension;
+                return _timestamp;
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
-
-        public bool Exists => _fileSystemMock.Files.Any(f => f.FullName == this.FullName);
-
-        public ulong Length => throw new NotImplementedException();
-
-        public DateTime LastWriteTime
+        set
         {
-            get
+            if (this.Exists)
             {
-                if (this.Exists)
-                {
-                    return _timestamp;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                _timestamp = value;
             }
-            set
+            else
             {
-                if (this.Exists)
-                {
-                    _timestamp = value;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                throw new NotSupportedException();
             }
         }
+    }
 
-        public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public DateTime CreationTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public DateTime CreationTime
-        {
-            get
-            {
-                if (this.Exists)
-                {
-                    return _timestamp;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
-            set
-            {
-                if (this.Exists)
-                {
-                    _timestamp = value;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
-        }
+    public DateTime LastAccessTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public DateTime CreationTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public FileAttributes Attributes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public bool IsReadOnly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public DateTime LastAccessTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public IIOServices IOServices => throw new NotImplementedException();
 
-        public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public FileAttributes Attributes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsReadOnly { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    IIOServices IIOServiceItem.IOServices => throw new NotImplementedException();
 
-        public IIOServices IOServices => throw new NotImplementedException();
+    string IFileInfo.FolderName => throw new NotImplementedException();
 
-        IIOServices IIOServiceItem.IOServices => throw new NotImplementedException();
+    long IFileInfo.Length => throw new NotImplementedException();
 
-        string IFileInfo.FolderName => throw new NotImplementedException();
+    public IFileInfo CopyTo(string destFileName)
+    {
+        throw new NotImplementedException();
+    }
 
-        long IFileInfo.Length => throw new NotImplementedException();
+    public IFileInfo CopyTo(string destFileName, bool overwrite)
+    {
+        throw new NotImplementedException();
+    }
 
-        public IFileInfo CopyTo(string destFileName)
-        {
-            throw new NotImplementedException();
-        }
+    public Stream Create()
+    {
+        throw new NotImplementedException();
+    }
 
-        public IFileInfo CopyTo(string destFileName, bool overwrite)
-        {
-            throw new NotImplementedException();
-        }
+    public StreamWriter CreateText()
+    {
+        throw new NotImplementedException();
+    }
 
-        public Stream Create()
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
 
-        public StreamWriter CreateText()
-        {
-            throw new NotImplementedException();
-        }
+    public bool Equals(IFileInfo other)
+        => this.FullName.Equals(other?.FullName);
 
-        public void Delete()
-        {
-            throw new NotImplementedException();
-        }
+    public Stream Open(FileMode mode)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool Equals(IFileInfo other)
-            => this.FullName.Equals(other?.FullName);
+    public Stream Open(FileMode mode, FileAccess access)
+    {
+        throw new NotImplementedException();
+    }
 
-        public Stream Open(FileMode mode)
-        {
-            throw new NotImplementedException();
-        }
+    public Stream Open(FileMode mode, FileAccess access, FileShare share)
+    {
+        throw new NotImplementedException();
+    }
 
-        public Stream Open(FileMode mode, FileAccess access)
-        {
-            throw new NotImplementedException();
-        }
+    public Stream OpenRead()
+    {
+        throw new NotImplementedException();
+    }
 
-        public Stream Open(FileMode mode, FileAccess access, FileShare share)
-        {
-            throw new NotImplementedException();
-        }
+    public StreamReader OpenText()
+    {
+        throw new NotImplementedException();
+    }
 
-        public Stream OpenRead()
-        {
-            throw new NotImplementedException();
-        }
+    public Stream OpenWrite()
+    {
+        throw new NotImplementedException();
+    }
 
-        public StreamReader OpenText()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Stream OpenWrite()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IFileInfo.MoveTo(string targetFileName)
-        {
-            throw new NotImplementedException();
-        }
+    void IFileInfo.MoveTo(string targetFileName)
+    {
+        throw new NotImplementedException();
     }
 }

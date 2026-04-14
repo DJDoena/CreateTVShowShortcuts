@@ -1,8 +1,7 @@
-﻿namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
+
+public interface ITupleStorage
 {
-    public interface ITupleStorage
-    {
-        ITuple GetTuple(string article
-            , bool articleIsPrefix);
-    }
+    ITuple GetTuple(string article
+        , bool articleIsPrefix);
 }

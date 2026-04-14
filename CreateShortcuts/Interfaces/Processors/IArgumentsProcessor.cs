@@ -1,15 +1,14 @@
-﻿namespace DoenaSoft.CreateShortcuts.Interfaces.Processors
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.Processors;
+
+public interface IArgumentsProcessor : IProcessor
 {
-    public interface IArgumentsProcessor : IProcessor
-    {
-        bool AppendArticles { get; }
+    bool AppendArticles { get; }
 
-        string LogFile { get; }
+    string LogFile { get; }
 
-        bool DualLog { get; }
+    bool DualLog { get; }
 
-        bool ShowHelp { get; }
+    bool ShowHelp { get; }
 
-        void PrintArguments();
-    }
+    void PrintArguments();
 }

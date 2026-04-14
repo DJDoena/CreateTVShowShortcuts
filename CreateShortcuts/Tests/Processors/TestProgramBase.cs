@@ -5,104 +5,103 @@ using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 using DoenaSoft.CreateShortcuts.Tests.IOServices;
 using DoenaSoft.CreateShortcuts.Tests.ObjectStorage;
 
-namespace DoenaSoft.CreateShortcuts.Tests.Processors
+namespace DoenaSoft.CreateShortcuts.Tests.Processors;
+
+internal abstract class TestProgramBase : IProgram
 {
-    internal abstract class TestProgramBase : IProgram
+    protected readonly IObjectStorage _objectStorage;
+
+    protected TestProgramBase()
     {
-        protected readonly IObjectStorage _objectStorage;
+        var of = this.ObjectFactory;
 
-        protected TestProgramBase()
+        _objectStorage = of.CreateObjectStorage(this, this.Arguments);
+    }
+
+    public virtual string RootFolderForShortcutFiles
+        => Defaults.RootFolderForShortcutFiles;
+
+    public virtual string SeasonFolderPattern
+        => Defaults.SeasonFolderPattern;
+
+    public virtual string StaffelFolderPattern
+        => Defaults.StaffelFolderPattern;
+
+    public virtual string SeriesNamePattern
+        => Defaults.SeriesNamePattern;
+
+    public virtual string ShortcutExtension
+        => Defaults.ShortcutExtension;
+
+    public virtual IEnumerable<string> VideoFileFolders
+        => Defaults.VideoFileFolders;
+
+    protected virtual IObjectFactory ObjectFactory
+        => new TestObjectFactory(new TestWarningsProcessor(this.ExpectedWarnings), this.SearchPatternMatches);
+
+    protected virtual IEnumerable<SearchPatternMatch> SearchPatternMatches
+    {
+        get
         {
-            var of = this.ObjectFactory;
-
-            _objectStorage = of.CreateObjectStorage(this, this.Arguments);
+            yield return new SearchPatternMatch(this.SeriesNamePattern, string.Empty, SearchPatternMatch.StringPosition.Anywhere);
+            yield return new SearchPatternMatch(this.SeasonFolderPattern, this.SeasonFolderSearchPatternText, SearchPatternMatch.StringPosition.Start);
+            yield return new SearchPatternMatch(this.ShortcutExtensionSearchPatternPattern, this.ShortcutExtension, SearchPatternMatch.StringPosition.End);
         }
+    }
 
-        public virtual string RootFolderForShortcutFiles
-            => Defaults.RootFolderForShortcutFiles;
+    protected virtual string SeasonFolderSearchPatternText
+        => "Season ";
 
-        public virtual string SeasonFolderPattern
-            => Defaults.SeasonFolderPattern;
+    protected virtual string ShortcutExtensionSearchPatternPattern
+        => "*" + this.ShortcutExtension;
 
-        public virtual string StaffelFolderPattern
-            => Defaults.StaffelFolderPattern;
+    protected virtual IEnumerable<string> Arguments
+        => new string[0];
 
-        public virtual string SeriesNamePattern
-            => Defaults.SeriesNamePattern;
+    protected virtual IEnumerable<string> ExpectedWarnings
+        => new string[0];
 
-        public virtual string ShortcutExtension
-            => Defaults.ShortcutExtension;
+    public void Process()
+    {
+        _objectStorage.ArgumentsProcessor.Process();
 
-        public virtual IEnumerable<string> VideoFileFolders
-            => Defaults.VideoFileFolders;
+        var ioServices = _objectStorage.IOServices;
 
-        protected virtual IObjectFactory ObjectFactory
-            => new TestObjectFactory(new TestWarningsProcessor(this.ExpectedWarnings), this.SearchPatternMatches);
+        ioServices.Folder.CreateFolder(this.RootFolderForShortcutFiles);
 
-        protected virtual IEnumerable<SearchPatternMatch> SearchPatternMatches
-        {
-            get
-            {
-                yield return new SearchPatternMatch(this.SeriesNamePattern, string.Empty, SearchPatternMatch.StringPosition.Anywhere);
-                yield return new SearchPatternMatch(this.SeasonFolderPattern, this.SeasonFolderSearchPatternText, SearchPatternMatch.StringPosition.Start);
-                yield return new SearchPatternMatch(this.ShortcutExtensionSearchPatternPattern, this.ShortcutExtension, SearchPatternMatch.StringPosition.End);
-            }
-        }
+        _objectStorage.ShortcutFolderProcessor.Process();
 
-        protected virtual string SeasonFolderSearchPatternText
-            => "Season ";
+        _objectStorage.VideoFolderProcessor.Process();
 
-        protected virtual string ShortcutExtensionSearchPatternPattern
-            => "*" + this.ShortcutExtension;
+        _objectStorage.WarningsProcessor.Process();
 
-        protected virtual IEnumerable<string> Arguments
-            => new string[0];
+        this.Assert();
+    }
 
-        protected virtual IEnumerable<string> ExpectedWarnings
-            => new string[0];
+    protected abstract void Assert();
 
-        public void Process()
-        {
-            _objectStorage.ArgumentsProcessor.Process();
+    protected void AssertFolderExists(IObjectStorage os
+        , params string[] pathSegments)
+    {
+        string path;
 
-            var ioServices = _objectStorage.IOServices;
+        path = _objectStorage.IOServices.Path.Combine(pathSegments);
 
-            ioServices.Folder.CreateFolder(this.RootFolderForShortcutFiles);
+        Debug.Assert(os.IOServices.Folder.Exists(path), string.Format("Folder doesn't exist: {0}", path));
+    }
 
-            _objectStorage.ShortcutFolderProcessor.Process();
+    protected void AssertFileExists(IObjectStorage os
+        , params string[] pathSegments)
+    {
+        string path;
 
-            _objectStorage.VideoFolderProcessor.Process();
+        path = _objectStorage.IOServices.Path.Combine(pathSegments);
 
-            _objectStorage.WarningsProcessor.Process();
+        Debug.Assert(os.IOServices.File.Exists(path), string.Format("File doesn't exist: {0}", path));
+    }
 
-            this.Assert();
-        }
-
-        protected abstract void Assert();
-
-        protected void AssertFolderExists(IObjectStorage os
-            , params string[] pathSegments)
-        {
-            string path;
-
-            path = _objectStorage.IOServices.Path.Combine(pathSegments);
-
-            Debug.Assert(os.IOServices.Folder.Exists(path), string.Format("Folder doesn't exist: {0}", path));
-        }
-
-        protected void AssertFileExists(IObjectStorage os
-            , params string[] pathSegments)
-        {
-            string path;
-
-            path = _objectStorage.IOServices.Path.Combine(pathSegments);
-
-            Debug.Assert(os.IOServices.File.Exists(path), string.Format("File doesn't exist: {0}", path));
-        }
-
-        public void Dispose()
-        {
-            _objectStorage.Dispose();
-        }
+    public void Dispose()
+    {
+        _objectStorage.Dispose();
     }
 }

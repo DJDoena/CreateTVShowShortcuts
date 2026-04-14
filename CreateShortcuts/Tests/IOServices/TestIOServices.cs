@@ -6,95 +6,94 @@ using System.Text;
 using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
 
-namespace DoenaSoft.CreateShortcuts.Tests.IOServices
+namespace DoenaSoft.CreateShortcuts.Tests.IOServices;
+
+internal sealed class TestIOServices : IIOServices
 {
-    internal sealed class TestIOServices : IIOServices
+    private readonly FileSystemMock _fileSystemMock;
+
+    private static readonly Assembly _assembly;
+
+    static TestIOServices()
     {
-        private readonly FileSystemMock _fileSystemMock;
+        _assembly = typeof(IIOServices).Assembly;
+    }
 
-        private static readonly Assembly _assembly;
+    public TestIOServices(FileSystemMock fileSystemMock
+        , IEnumerable<SearchPatternMatch> searchPatternMatches
+        , IObjectStorage os)
+    {
+        _fileSystemMock = fileSystemMock;
 
-        static TestIOServices()
-        {
-            _assembly = typeof(IIOServices).Assembly;
-        }
+        this.Path = Instantiate<IPath>("DoenaSoft.AbstractionLayer.IOServices.Path", this);
 
-        public TestIOServices(FileSystemMock fileSystemMock
-            , IEnumerable<SearchPatternMatch> searchPatternMatches
-            , IObjectStorage os)
-        {
-            _fileSystemMock = fileSystemMock;
+        this.Folder = new TestFolder(this, fileSystemMock, searchPatternMatches, os);
 
-            this.Path = Instantiate<IPath>("DoenaSoft.AbstractionLayer.IOServices.Path", this);
+        this.File = new TestFile(fileSystemMock, os);
+    }
 
-            this.Folder = new TestFolder(this, fileSystemMock, searchPatternMatches, os);
+    public IPath Path { get; private set; }
 
-            this.File = new TestFile(fileSystemMock, os);
-        }
+    public IFolder Folder { get; private set; }
 
-        public IPath Path { get; private set; }
+    public IFile File { get; private set; }
 
-        public IFolder Folder { get; private set; }
+    public IFileInfo GetFile(string fileName)
+    {
+        var fi = _fileSystemMock.Files.FirstOrDefault(f => f.FullName == fileName);
 
-        public IFile File { get; private set; }
+        return fi ?? new TestFileInfo(fileName, _fileSystemMock);
+    }
 
-        public IFileInfo GetFile(string fileName)
-        {
-            var fi = _fileSystemMock.Files.FirstOrDefault(f => f.FullName == fileName);
+    public IFolderInfo GetFolder(string path)
+    {
+        var fi = _fileSystemMock.Folders.FirstOrDefault(f => f.FullName == path);
 
-            return fi ?? new TestFileInfo(fileName, _fileSystemMock);
-        }
+        return fi ?? new TestFolderInfo(path, _fileSystemMock);
+    }
 
-        public IFolderInfo GetFolder(string path)
-        {
-            var fi = _fileSystemMock.Folders.FirstOrDefault(f => f.FullName == path);
+    public System.IO.Stream GetFileStream(string fileName
+        , System.IO.FileMode mode
+        , System.IO.FileAccess access
+        , System.IO.FileShare share)
+    {
+        throw new NotImplementedException();
+    }
 
-            return fi ?? new TestFolderInfo(path, _fileSystemMock);
-        }
+    public IEnumerable<IDriveInfo> GetDrives(System.IO.DriveType? driveType)
+    {
+        throw new NotImplementedException();
+    }
 
-        public System.IO.Stream GetFileStream(string fileName
-            , System.IO.FileMode mode
-            , System.IO.FileAccess access
-            , System.IO.FileShare share)
-        {
-            throw new NotImplementedException();
-        }
+    public IDriveInfo GetDrive(string driveLetter)
+    {
+        throw new NotImplementedException();
+    }
 
-        public IEnumerable<IDriveInfo> GetDrives(System.IO.DriveType? driveType)
-        {
-            throw new NotImplementedException();
-        }
+    public System.IO.StreamWriter GetStreamWriter(System.IO.Stream stream
+        , Encoding encoding = null)
+    {
+        throw new NotImplementedException();
+    }
 
-        public IDriveInfo GetDrive(string driveLetter)
-        {
-            throw new NotImplementedException();
-        }
+    public IFileSystemWatcher GetFileSystemWatcher(string path
+        , string filter = null)
+    {
+        throw new NotImplementedException();
+    }
 
-        public System.IO.StreamWriter GetStreamWriter(System.IO.Stream stream
-            , Encoding encoding = null)
-        {
-            throw new NotImplementedException();
-        }
+    internal static T Instantiate<T>(string typeName
+        , params object[] args)
+    {
+        var type = _assembly.GetType(typeName);
 
-        public IFileSystemWatcher GetFileSystemWatcher(string path
-            , string filter = null)
-        {
-            throw new NotImplementedException();
-        }
+        var instance = (T)Activator.CreateInstance(type, args);
 
-        internal static T Instantiate<T>(string typeName
-            , params object[] args)
-        {
-            var type = _assembly.GetType(typeName);
+        return instance;
+    }
 
-            var instance = (T)Activator.CreateInstance(type, args);
-
-            return instance;
-        }
-
-        public IRenameQueue CreateRenameQueue(ILogger logger = null)
-        {
-            throw new NotImplementedException();
-        }
+    public IRenameQueue CreateRenameQueue(ILogger logger = null)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,10 +1,9 @@
 ﻿using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
-namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
+namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
+
+public interface IArticleProcessorStorage
 {
-    public interface IArticleProcessorStorage
-    {
-        IArticleProcessor GetArticleProcessor(string seriesName
-            , bool articleIsPrefix);
-    }
+    IArticleProcessor GetArticleProcessor(string seriesName
+        , bool articleIsPrefix);
 }

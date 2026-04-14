@@ -4,157 +4,156 @@ using System.IO;
 using System.Linq;
 using DoenaSoft.AbstractionLayer.IOServices;
 
-namespace DoenaSoft.CreateShortcuts.Tests.IOServices
+namespace DoenaSoft.CreateShortcuts.Tests.IOServices;
+
+internal sealed class TestFolderInfo : IFolderInfo
 {
-    internal sealed class TestFolderInfo : IFolderInfo
+    private readonly string _path;
+
+    private readonly FileSystemMock _fileSystemMock;
+
+    private DateTime _timestamp;
+
+    public TestFolderInfo(string path
+        , FileSystemMock fileSystemMock)
     {
-        private readonly string _path;
+        _path = path;
+        _fileSystemMock = fileSystemMock;
+        _timestamp = DateTime.Now;
+    }
 
-        private readonly FileSystemMock _fileSystemMock;
+    public string Name
+        => this.FullName.Split('\\').Last();
 
-        private DateTime _timestamp;
+    public IFolderInfo Root
+        => new TestFolderInfo(this.FullName.Split('\\').First(), _fileSystemMock);
 
-        public TestFolderInfo(string path
-            , FileSystemMock fileSystemMock)
+    public IFolderInfo Parent
+        => throw new NotImplementedException();
+
+    public bool Exists
+        => _fileSystemMock.Folders.Any(f => f.FullName == this.FullName);
+
+    public string FullName
+        => _path;
+
+    public DateTime LastWriteTime
+    {
+        get
         {
-            _path = path;
-            _fileSystemMock = fileSystemMock;
-            _timestamp = DateTime.Now;
-        }
-
-        public string Name
-            => this.FullName.Split('\\').Last();
-
-        public IFolderInfo Root
-            => new TestFolderInfo(this.FullName.Split('\\').First(), _fileSystemMock);
-
-        public IFolderInfo Parent
-            => throw new NotImplementedException();
-
-        public bool Exists
-            => _fileSystemMock.Folders.Any(f => f.FullName == this.FullName);
-
-        public string FullName
-            => _path;
-
-        public DateTime LastWriteTime
-        {
-            get
+            if (this.Exists)
             {
-                if (this.Exists)
-                {
-                    return _timestamp;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                return _timestamp;
             }
-            set
+            else
             {
-                if (this.Exists)
-                {
-                    _timestamp = value;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                throw new NotSupportedException();
             }
         }
-
-        public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public DateTime CreationTime
+        set
         {
-            get
+            if (this.Exists)
             {
-                if (this.Exists)
-                {
-                    return _timestamp;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                _timestamp = value;
             }
-            set
+            else
             {
-                if (this.Exists)
-                {
-                    _timestamp = value;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                throw new NotSupportedException();
             }
         }
+    }
 
-        public DateTime CreationTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public DateTime LastWriteTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public DateTime LastAccessTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public FileAttributes Attributes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public IIOServices IOServices => throw new NotImplementedException();
-
-        IIOServices IIOServiceItem.IOServices => throw new NotImplementedException();
-
-        IDriveInfo IFolderInfo.Drive => throw new NotImplementedException();
-
-        public void Create()
+    public DateTime CreationTime
+    {
+        get
         {
-            throw new NotImplementedException();
+            if (this.Exists)
+            {
+                return _timestamp;
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
-
-        public void Delete()
+        set
         {
-            throw new NotImplementedException();
+            if (this.Exists)
+            {
+                _timestamp = value;
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
+    }
 
-        public void Delete(bool recursive)
-        {
-            throw new NotImplementedException();
-        }
+    public DateTime CreationTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public bool Equals(IFolderInfo other)
-            => this.FullName.Equals(other?.FullName);
+    public DateTime LastAccessTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public IEnumerable<IFileInfo> GetFiles()
-        {
-            throw new NotImplementedException();
-        }
+    public DateTime LastAccessTimeUtc { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public FileAttributes Attributes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public IEnumerable<IFileInfo> GetFiles(string searchPattern)
-        {
-            throw new NotImplementedException();
-        }
+    public IIOServices IOServices => throw new NotImplementedException();
 
-        public IEnumerable<IFolderInfo> GetFolders()
-        {
-            throw new NotImplementedException();
-        }
+    IIOServices IIOServiceItem.IOServices => throw new NotImplementedException();
 
-        public IEnumerable<IFolderInfo> GetFolders(string searchPattern)
-        {
-            throw new NotImplementedException();
-        }
+    IDriveInfo IFolderInfo.Drive => throw new NotImplementedException();
 
-        public void MoveTo(string destFolderName)
-        {
-            throw new NotImplementedException();
-        }
+    public void Create()
+    {
+        throw new NotImplementedException();
+    }
 
-        IEnumerable<IFileInfo> IFolderInfo.GetFiles(string searchPattern, System.IO.SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete()
+    {
+        throw new NotImplementedException();
+    }
 
-        IEnumerable<IFolderInfo> IFolderInfo.GetFolders(string searchPattern, SearchOption searchOption)
-        {
-            throw new NotImplementedException();
-        }
+    public void Delete(bool recursive)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Equals(IFolderInfo other)
+        => this.FullName.Equals(other?.FullName);
+
+    public IEnumerable<IFileInfo> GetFiles()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<IFileInfo> GetFiles(string searchPattern)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<IFolderInfo> GetFolders()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<IFolderInfo> GetFolders(string searchPattern)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void MoveTo(string destFolderName)
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerable<IFileInfo> IFolderInfo.GetFiles(string searchPattern, System.IO.SearchOption searchOption)
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerable<IFolderInfo> IFolderInfo.GetFolders(string searchPattern, SearchOption searchOption)
+    {
+        throw new NotImplementedException();
     }
 }

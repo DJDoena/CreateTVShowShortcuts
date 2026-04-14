@@ -1,9 +1,8 @@
-﻿namespace DoenaSoft.CreateShortcuts.Interfaces
-{
-    public interface ITuple
-    {
-        string Source { get; }
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces;
 
-        string Target { get; }
-    }
+public interface ITuple
+{
+    string Source { get; }
+
+    string Target { get; }
 }

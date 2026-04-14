@@ -1,14 +1,13 @@
-﻿namespace DoenaSoft.CreateShortcuts.Tests.IOServices
+﻿namespace DoenaSoft.CreateShortcuts.Tests.IOServices;
+
+internal sealed partial class SearchPatternMatch
 {
-    internal sealed partial class SearchPatternMatch
+    public enum StringPosition
     {
-        public enum StringPosition
-        {
-            Start,
+        Start,
 
-            End,
+        End,
 
-            Anywhere,
-        }
+        Anywhere,
     }
 }

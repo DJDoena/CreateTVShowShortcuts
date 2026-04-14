@@ -1,9 +1,8 @@
 ﻿using DoenaSoft.AbstractionLayer.IOServices;
 
-namespace DoenaSoft.CreateShortcuts.Interfaces
+namespace DoenaSoft.CreateShortcuts.Interfaces;
+
+public interface IHelper
 {
-    public interface IHelper
-    {
-        bool IsSpecialFolder(IFolderInfo di);
-    }
+    bool IsSpecialFolder(IFolderInfo di);
 }

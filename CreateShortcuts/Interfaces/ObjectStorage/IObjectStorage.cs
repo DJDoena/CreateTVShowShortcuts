@@ -4,28 +4,27 @@ using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
-namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage
+namespace DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
+
+public interface IObjectStorage : IArticleProcessorStorage, ITupleStorage, IDisposable
 {
-    public interface IObjectStorage : IArticleProcessorStorage, ITupleStorage, IDisposable
-    {
-        IProgram Program { get; }
+    IProgram Program { get; }
 
-        IEnumerable<string> Arguments { get; }
+    IEnumerable<string> Arguments { get; }
 
-        IWarningsProcessor WarningsProcessor { get; }
+    IWarningsProcessor WarningsProcessor { get; }
 
-        IArgumentsProcessor ArgumentsProcessor { get; }
+    IArgumentsProcessor ArgumentsProcessor { get; }
 
-        IProcessor ShortcutFolderProcessor { get; }
+    IProcessor ShortcutFolderProcessor { get; }
 
-        IProcessor VideoFolderProcessor { get; }
+    IProcessor VideoFolderProcessor { get; }
 
-        IHelper Helper { get; }
+    IHelper Helper { get; }
 
-        IShortcutCreator ShortcutCreator { get; }
+    IShortcutCreator ShortcutCreator { get; }
 
-        IIOServices IOServices { get; }
+    IIOServices IOServices { get; }
 
-        ILogger Logger { get; }
-    }
+    ILogger Logger { get; }
 }

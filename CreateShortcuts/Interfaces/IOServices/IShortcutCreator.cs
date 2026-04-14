@@ -1,8 +1,7 @@
-﻿namespace DoenaSoft.CreateShortcuts.Interfaces.IOServices
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.IOServices;
+
+public interface IShortcutCreator
 {
-    public interface IShortcutCreator
-    {
-        string Create(string seriesFolderForShortcutFiles
-            , string seasonFolder);
-    }
+    string Create(string seriesFolderForShortcutFiles
+        , string seasonFolder);
 }

@@ -1,7 +1,6 @@
-﻿namespace DoenaSoft.CreateShortcuts.Interfaces.Processors
+﻿namespace DoenaSoft.CreateShortcuts.Interfaces.Processors;
+
+public interface IProcessor
 {
-    public interface IProcessor
-    {
-        void Process();
-    }
+    void Process();
 }
