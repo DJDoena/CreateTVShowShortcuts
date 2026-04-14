@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="CreateShortcuts/Implementation/CreateShortcuts.Implementation.csproj" />
   <Project Path="CreateShortcuts/Interfaces/CreateShortcuts.Interfaces.csproj" />
   <Project Path="CreateShortcuts/Program/CreateShortcuts.csproj" />
