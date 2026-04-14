@@ -1,9 +1,9 @@
-﻿using DoenaSoft.AbstractionLayer.IOServices;
-using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
-using DoenaSoft.CreateShortcuts.Interfaces.Processors;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DoenaSoft.AbstractionLayer.IOServices;
+using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
+using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
 namespace DoenaSoft.CreateShortcuts.Implementation.Processors;
 
@@ -166,14 +166,40 @@ internal sealed class VideoFolderProcessor : IProcessor
 
     private void CreateTextFileWithRemoteSeasons(string seriesFolderInShortcutFolder, string seriesFolderInVideoFolder, IEnumerable<string> seasonFolderNames)
     {
-        var ioServices = _objectStorage.IOServices;
+        const string TextFileName = "Links.txt";
+
         var searchPattern = "*" + _objectStorage.Program.ShortcutExtension;
+
+        var ioServices = _objectStorage.IOServices;
+
         var shortcutFiles = ioServices.Folder.GetFileNames(seriesFolderInShortcutFolder, searchPattern);
+
+        var remoteSeasonPaths = this.GetRemoteSeasonPaths(seasonFolderNames, ioServices, shortcutFiles);
+
+        if (remoteSeasonPaths.Any())
+        {
+            var textFileName = ioServices.Path.Combine(seriesFolderInVideoFolder, TextFileName);
+
+            var content = string.Join(System.Environment.NewLine, remoteSeasonPaths);
+
+            ioServices.File.WriteAllText(textFileName, content, System.Text.Encoding.ASCII);
+        }
+        else if (ioServices.File.Exists(TextFileName))
+        {
+            ioServices.File.Delete(TextFileName);
+        }
+    }
+
+    private IEnumerable<string> GetRemoteSeasonPaths(IEnumerable<string> seasonFolderNames
+        , IIOServices ioServices
+        , IEnumerable<string> shortcutFiles)
+    {
         var remoteSeasonPaths = new List<string>();
 
         foreach (var shortcutFile in shortcutFiles)
         {
             var shortcutFileFI = ioServices.GetFile(shortcutFile);
+
             var shortcutName = GetShortcutName(shortcutFileFI);
 
             if (SeasonFolderDoesNotExist(seasonFolderNames, shortcutName))
@@ -189,13 +215,7 @@ internal sealed class VideoFolderProcessor : IProcessor
             }
         }
 
-        if (remoteSeasonPaths.Count > 0)
-        {
-            var textFileName = ioServices.Path.Combine(seriesFolderInVideoFolder, "OtherSeasons.txt");
-            var content = string.Join(System.Environment.NewLine, remoteSeasonPaths);
-
-            ioServices.File.WriteAllText(textFileName, content);
-        }
+        return remoteSeasonPaths;
     }
 
     private string GetShortcutTargetPath(string shortcutFile)

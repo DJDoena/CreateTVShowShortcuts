@@ -3,24 +3,23 @@ using System.Linq;
 using DoenaSoft.AbstractionLayer.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces;
 
-namespace DoenaSoft.CreateShortcuts.Implementation
+namespace DoenaSoft.CreateShortcuts.Implementation;
+
+internal sealed class Helper : IHelper
 {
-    internal sealed class Helper : IHelper
+    public bool IsSpecialFolder(IFolderInfo di)
     {
-        public bool IsSpecialFolder(IFolderInfo di)
-        {
-            var isSpecialFolder = this.SpecialFolders.Contains(di.Name);
+        var isSpecialFolder = this.SpecialFolders.Contains(di.Name);
 
-            return isSpecialFolder;
-        }
+        return isSpecialFolder;
+    }
 
-        private IEnumerable<string> SpecialFolders
+    private IEnumerable<string> SpecialFolders
+    {
+        get
         {
-            get
-            {
-                yield return "The Ultimate Pilot Collection";
-                yield return "Movies";
-            }
+            yield return "The Ultimate Pilot Collection";
+            yield return "Movies";
         }
     }
 }

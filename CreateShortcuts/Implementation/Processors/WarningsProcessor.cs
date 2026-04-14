@@ -3,48 +3,47 @@ using System.Linq;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
-namespace DoenaSoft.CreateShortcuts.Implementation.Processors
+namespace DoenaSoft.CreateShortcuts.Implementation.Processors;
+
+internal sealed class WarningsProcessor : IWarningsProcessor
 {
-    internal sealed class WarningsProcessor : IWarningsProcessor
+    private readonly List<IEnumerable<string>> _warnings;
+
+    private readonly IObjectStorage _objectStorage;
+
+    public WarningsProcessor(IObjectStorage os)
     {
-        private readonly List<IEnumerable<string>> _warnings;
+        _objectStorage = os;
+        _warnings = new List<IEnumerable<string>>(2);
+    }
 
-        private readonly IObjectStorage _objectStorage;
+    public void AddWarnings(IEnumerable<string> warnings)
+    {
+        _warnings.Add(warnings);
+    }
 
-        public WarningsProcessor(IObjectStorage os)
+    public void Process()
+    {
+        if (_warnings.Count > 0)
         {
-            _objectStorage = os;
-            _warnings = new List<IEnumerable<string>>(2);
-        }
+            List<string> warnings;
 
-        public void AddWarnings(IEnumerable<string> warnings)
-        {
-            _warnings.Add(warnings);
-        }
+            warnings = _warnings.SelectMany(item => item).ToList();
 
-        public void Process()
-        {
-            if (_warnings.Count > 0)
+            if (warnings.Count > 0)
             {
-                List<string> warnings;
+                var logger = _objectStorage.Logger;
 
-                warnings = _warnings.SelectMany(item => item).ToList();
-
-                if (warnings.Count > 0)
+                foreach (var warning in warnings)
                 {
-                    var logger = _objectStorage.Logger;
-
-                    foreach (var warning in warnings)
-                    {
-                        logger.WriteLineForInput(warning);
-                    }
-
-                    logger.WriteLineForInput("Press <Enter> to continue.");
-                    logger.ReadLine();
+                    logger.WriteLineForInput(warning);
                 }
 
-                _warnings.Clear();
+                logger.WriteLineForInput("Press <Enter> to continue.");
+                logger.ReadLine();
             }
+
+            _warnings.Clear();
         }
     }
 }

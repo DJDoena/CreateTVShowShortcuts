@@ -6,199 +6,198 @@ using DoenaSoft.CreateShortcuts.Interfaces.IOServices;
 using DoenaSoft.CreateShortcuts.Interfaces.ObjectStorage;
 using DoenaSoft.CreateShortcuts.Interfaces.Processors;
 
-namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage
+namespace DoenaSoft.CreateShortcuts.Implementation.ObjectStorage;
+
+internal sealed class ObjectStorage : IObjectStorage
 {
-    internal sealed class ObjectStorage : IObjectStorage
+    private readonly IProgram _program;
+
+    private readonly IObjectFactory _objectFactory;
+
+    private IWarningsProcessor _warningsProcessor;
+
+    private IArgumentsProcessor _argumentsProcessor;
+
+    private IProcessor _shortcutFolderProcessor;
+
+    private IProcessor _videoFolderProcessor;
+
+    private IHelper _helper;
+
+    private IShortcutCreator _shortcutCreator;
+
+    private IIOServices _ioServices;
+
+    private ILogger _logger;
+
+    public IEnumerable<string> Arguments { get; private set; }
+
+    private IArticleProcessorStorage ArticleProcessorStorage { get; set; }
+
+    private ITupleStorage TupleStorage { get; set; }
+
+
+    public ObjectStorage(IProgram program, IEnumerable<string> arguments, IObjectFactory of)
     {
-        private readonly IProgram _program;
+        _program = program;
+        this.Arguments = arguments;
+        _objectFactory = of;
+    }
 
-        private readonly IObjectFactory _objectFactory;
-
-        private IWarningsProcessor _warningsProcessor;
-
-        private IArgumentsProcessor _argumentsProcessor;
-
-        private IProcessor _shortcutFolderProcessor;
-
-        private IProcessor _videoFolderProcessor;
-
-        private IHelper _helper;
-
-        private IShortcutCreator _shortcutCreator;
-
-        private IIOServices _ioServices;
-
-        private ILogger _logger;
-
-        public IEnumerable<string> Arguments { get; private set; }
-
-        private IArticleProcessorStorage ArticleProcessorStorage { get; set; }
-
-        private ITupleStorage TupleStorage { get; set; }
-
-
-        public ObjectStorage(IProgram program, IEnumerable<string> arguments, IObjectFactory of)
+    public IWarningsProcessor WarningsProcessor
+    {
+        get
         {
-            _program = program;
-            this.Arguments = arguments;
-            _objectFactory = of;
-        }
-
-        public IWarningsProcessor WarningsProcessor
-        {
-            get
+            if (_warningsProcessor == null)
             {
-                if (_warningsProcessor == null)
-                {
-                    _warningsProcessor = _objectFactory.CreateWarningsProcessor(this);
-                }
-
-                return _warningsProcessor;
-            }
-        }
-
-        public IArgumentsProcessor ArgumentsProcessor
-        {
-            get
-            {
-                if (_argumentsProcessor == null)
-                {
-                    _argumentsProcessor = _objectFactory.CreateArgumentsProessor(this);
-                }
-
-                return _argumentsProcessor;
-            }
-        }
-
-        public IProcessor ShortcutFolderProcessor
-        {
-            get
-            {
-                if (_shortcutFolderProcessor == null)
-                {
-                    _shortcutFolderProcessor = _objectFactory.CreateShortcutFolderProcessor(this);
-                }
-
-                return _shortcutFolderProcessor;
-            }
-        }
-
-        public IProcessor VideoFolderProcessor
-        {
-            get
-            {
-                if (_videoFolderProcessor == null)
-                {
-                    _videoFolderProcessor = _objectFactory.CreateVideoFolderProcessor(this);
-                }
-
-                return _videoFolderProcessor;
-            }
-        }
-
-        public IArticleProcessor GetArticleProcessor(string seriesName, bool articleIsPrefix)
-        {
-            if (this.ArticleProcessorStorage == null)
-            {
-                this.ArticleProcessorStorage = new ArticleProcessorStorage(this, _objectFactory);
+                _warningsProcessor = _objectFactory.CreateWarningsProcessor(this);
             }
 
-            var articleProcessor = this.ArticleProcessorStorage.GetArticleProcessor(seriesName, articleIsPrefix);
-
-            return articleProcessor;
+            return _warningsProcessor;
         }
+    }
 
-        public IHelper Helper
+    public IArgumentsProcessor ArgumentsProcessor
+    {
+        get
         {
-            get
+            if (_argumentsProcessor == null)
             {
-                if (_helper == null)
-                {
-                    _helper = _objectFactory.CreateHelper();
-                }
-
-                return _helper;
-            }
-        }
-
-        public ITuple GetTuple(string article, bool articleIsPrefix)
-        {
-            if (this.TupleStorage == null)
-            {
-                this.TupleStorage = new TupleStorage(this, _objectFactory);
+                _argumentsProcessor = _objectFactory.CreateArgumentsProessor(this);
             }
 
-            var tuple = this.TupleStorage.GetTuple(article, articleIsPrefix);
+            return _argumentsProcessor;
+        }
+    }
 
-            return tuple;
+    public IProcessor ShortcutFolderProcessor
+    {
+        get
+        {
+            if (_shortcutFolderProcessor == null)
+            {
+                _shortcutFolderProcessor = _objectFactory.CreateShortcutFolderProcessor(this);
+            }
+
+            return _shortcutFolderProcessor;
+        }
+    }
+
+    public IProcessor VideoFolderProcessor
+    {
+        get
+        {
+            if (_videoFolderProcessor == null)
+            {
+                _videoFolderProcessor = _objectFactory.CreateVideoFolderProcessor(this);
+            }
+
+            return _videoFolderProcessor;
+        }
+    }
+
+    public IArticleProcessor GetArticleProcessor(string seriesName, bool articleIsPrefix)
+    {
+        if (this.ArticleProcessorStorage == null)
+        {
+            this.ArticleProcessorStorage = new ArticleProcessorStorage(this, _objectFactory);
         }
 
-        public IShortcutCreator ShortcutCreator
-        {
-            get
-            {
-                if (_shortcutCreator == null)
-                {
-                    _shortcutCreator = _objectFactory.CreateShortcutCreator(this);
-                }
+        var articleProcessor = this.ArticleProcessorStorage.GetArticleProcessor(seriesName, articleIsPrefix);
 
-                return _shortcutCreator;
+        return articleProcessor;
+    }
+
+    public IHelper Helper
+    {
+        get
+        {
+            if (_helper == null)
+            {
+                _helper = _objectFactory.CreateHelper();
             }
+
+            return _helper;
+        }
+    }
+
+    public ITuple GetTuple(string article, bool articleIsPrefix)
+    {
+        if (this.TupleStorage == null)
+        {
+            this.TupleStorage = new TupleStorage(this, _objectFactory);
         }
 
-        IProgram IObjectStorage.Program
+        var tuple = this.TupleStorage.GetTuple(article, articleIsPrefix);
+
+        return tuple;
+    }
+
+    public IShortcutCreator ShortcutCreator
+    {
+        get
         {
-            [DebuggerStepThrough]
-            get
+            if (_shortcutCreator == null)
             {
-                return _program;
+                _shortcutCreator = _objectFactory.CreateShortcutCreator(this);
             }
+
+            return _shortcutCreator;
         }
+    }
 
-        public IIOServices IOServices
+    IProgram IObjectStorage.Program
+    {
+        [DebuggerStepThrough]
+        get
         {
-            get
-            {
-                if (_ioServices == null)
-                {
-                    _ioServices = _objectFactory.CreateIOServices(this);
-                }
-
-                return _ioServices;
-            }
+            return _program;
         }
+    }
 
-        public ILogger Logger
+    public IIOServices IOServices
+    {
+        get
         {
-            get
+            if (_ioServices == null)
             {
-                if (_logger == null)
-                {
-                    _logger = _objectFactory.CreateLogger(this);
-                }
-
-                return _logger;
+                _ioServices = _objectFactory.CreateIOServices(this);
             }
+
+            return _ioServices;
         }
+    }
 
-        public void Dispose()
+    public ILogger Logger
+    {
+        get
         {
-            this.Arguments = null;
-            _warningsProcessor = null;
-            _argumentsProcessor = null;
-            _shortcutFolderProcessor = null;
-            _videoFolderProcessor = null;
-            _helper = null;
-            this.ArticleProcessorStorage = null;
-            this.TupleStorage = null;
-            _shortcutCreator = null;
-            _ioServices = null;
-
-            if (_logger != null)
+            if (_logger == null)
             {
-                _logger.Dispose();
-                _logger = null;
+                _logger = _objectFactory.CreateLogger(this);
             }
+
+            return _logger;
+        }
+    }
+
+    public void Dispose()
+    {
+        this.Arguments = null;
+        _warningsProcessor = null;
+        _argumentsProcessor = null;
+        _shortcutFolderProcessor = null;
+        _videoFolderProcessor = null;
+        _helper = null;
+        this.ArticleProcessorStorage = null;
+        this.TupleStorage = null;
+        _shortcutCreator = null;
+        _ioServices = null;
+
+        if (_logger != null)
+        {
+            _logger.Dispose();
+            _logger = null;
         }
     }
 }

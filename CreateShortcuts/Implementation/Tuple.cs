@@ -1,26 +1,25 @@
 ﻿using System.Diagnostics;
 using DoenaSoft.CreateShortcuts.Interfaces;
 
-namespace DoenaSoft.CreateShortcuts.Implementation
+namespace DoenaSoft.CreateShortcuts.Implementation;
+
+[DebuggerDisplay("Source={Source}, Target={Target})")]
+internal sealed class Tuple : ITuple
 {
-    [DebuggerDisplay("Source={Source}, Target={Target})")]
-    internal sealed class Tuple : ITuple
+    public string Source { get; private set; }
+
+    public string Target { get; private set; }
+
+    public Tuple(string article, bool articleIsPrefix)
     {
-        public string Source { get; private set; }
+        this.Source = article + " ";
+        this.Target = ", " + article;
 
-        public string Target { get; private set; }
-
-        public Tuple(string article, bool articleIsPrefix)
+        if (articleIsPrefix == false)
         {
-            this.Source = article + " ";
-            this.Target = ", " + article;
-
-            if (articleIsPrefix == false)
-            {
-                var temp = this.Source;
-                this.Source = this.Target;
-                this.Target = temp;
-            }
+            var temp = this.Source;
+            this.Source = this.Target;
+            this.Target = temp;
         }
     }
 }
